@@ -1,0 +1,38 @@
+{
+  "name": "react-rebound",
+  "version": "0.0.1",
+  "description": "A React component that animates its child using springs.",
+  "author": "Stefano J. Attardi (http://github.com/steadicat)",
+  "main": "lib/index.js",
+  "jsnext:main": "src/index.js",
+  "scripts": {
+    "lint": "eslint src",
+    "build": "./node_modules/.bin/babel src --out-dir lib",
+    "prepublish": "npm run build"
+  },
+  "homepage": "https://github.com/steadicat/react-rebound",
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:steadicat/react-rebound.git"
+  },
+  "bugs": {
+    "url": "https://github.com/steadicat/react-rebound/issues"
+  },
+  "keywords": [
+    "react",
+    "animation",
+    "animate",
+    "springs",
+    "rebound",
+    "motion"
+  ],
+  "dependencies": {
+    "react": "0.13.3",
+    "stylistic": "0.0.3",
+    "raf": "3.1.0"
+  },
+  "devDependencies": {
+    "babel": "5.8.21"
+  },
+  "license": "MIT"
+}
