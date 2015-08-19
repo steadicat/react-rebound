@@ -1,5 +1,6 @@
 import raf from 'raf';
 import React from 'react';
+import ReactDOM from 'react-dom';
 import rebound from 'rebound';
 import {extract} from 'stylistic';
 
@@ -15,7 +16,7 @@ export class Animate {
 
   componentDidMount() {
     this.springs = {};
-    this.node = React.findDOMNode(this.refs.child);
+    this.node = ReactDOM.findDOMNode(this.refs.child);
   }
 
   componentDidUpdate(lastProps) {

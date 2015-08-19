@@ -1,6 +1,6 @@
 {
   "name": "react-rebound",
-  "version": "0.0.2",
+  "version": "0.1.0",
   "description": "A React component that animates its child using springs.",
   "author": "Stefano J. Attardi (http://github.com/steadicat)",
   "main": "lib/index.js",
@@ -27,7 +27,8 @@
     "motion"
   ],
   "dependencies": {
-    "react": "0.13.3",
+    "react": ">0.14.0-beta",
+    "react-dom": ">0.14.0-beta",
     "stylistic": "0.0.4",
     "raf": "3.1.0"
   },
