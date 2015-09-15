@@ -14,9 +14,13 @@ function isNumeric(n) {
 export class Animate extends React.Component {
   static displayName = 'Animate';
 
-  componentDidMount() {
+  constructor() {
+    super();
     this.springs = {};
-    this.node = ReactDOM.findDOMNode(this.refs.child);
+  }
+
+  componentDidMount() {
+    this.node = ReactDOM.findDOMNode(this);
   }
 
   componentDidUpdate(lastProps) {
@@ -76,8 +80,6 @@ export class Animate extends React.Component {
   }
 
   render() {
-    const {children, ...props} = this.props;
-    const child = React.Children.only(children);
-    return React.cloneElement(child, {ref: 'child'});
+    return React.Children.only(this.props.children);
   }
 }
