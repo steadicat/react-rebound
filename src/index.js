@@ -11,7 +11,7 @@ function isNumeric(n) {
   return typeof n === 'number';
 }
 
-export class Animate {
+export class Animate extends React.Component {
   static displayName = 'Animate';
 
   componentDidMount() {
