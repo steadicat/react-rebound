@@ -27,13 +27,13 @@
     "motion"
   ],
   "dependencies": {
-    "react": ">0.14.0-beta",
-    "react-dom": ">0.14.0-beta",
-    "stylistic": "0.0.4",
+    "react": "0.14.2",
+    "react-dom": "0.14.2",
+    "stylistic": "0.0.8",
     "raf": "3.1.0"
   },
   "devDependencies": {
-    "babel": "5.8.21"
+    "babel": "5.8.29"
   },
   "license": "MIT"
 }
