@@ -17,10 +17,23 @@ export class Animate extends React.Component {
   constructor() {
     super();
     this.springs = {};
+    this.animating = false;
   }
 
   componentDidMount() {
     this.node = ReactDOM.findDOMNode(this);
+  }
+
+  componentWillUpdate(nextProps) {
+    // Check if this render will start an animation
+    if (!this.animating) {
+      for (let key in this.props) {
+        if (this.props[key] !== nextProps[key] && isNumeric(this.props[key]) && isNumeric(nextProps[key])) {
+          this.onAnimationStart();
+          break;
+        }
+      }
+    }
   }
 
   componentDidUpdate(lastProps) {
@@ -41,6 +54,8 @@ export class Animate extends React.Component {
     this.springs[key] = springSystem.createSpring();
     this.springs[key].setCurrentValue(startValue);
     this.springs[key].addListener({
+      onSpringActivate: this.onAnimationStart,
+      onSpringAtRest: this.onAnimationEnd,
       onSpringUpdate: this.requestUpdate,
     });
   }
@@ -52,6 +67,22 @@ export class Animate extends React.Component {
       });
     }
     this.springs[key].setEndValue(endValue);
+  }
+
+  onAnimationStart = () => {
+    if (this.animating) return;
+    this.animating = true;
+    if (typeof this.props.children === 'function') {
+      this.setState({}); // Trigger a re-render
+    }
+  }
+
+  onAnimationEnd = () => {
+    if (!this.animating) return;
+    this.animating = false;
+    if (typeof this.props.children === 'function') {
+      this.setState({}); // Trigger a re-render
+    }
   }
 
   requestUpdate = () => {
@@ -74,12 +105,16 @@ export class Animate extends React.Component {
     }, {});
 
     const {style} = extract({...this.props, ...current});
-    Object.keys(style).forEach((key) => {
+    for (let key in style) {
       this.node.style[key] = style[key];
-    });
+    }
   }
 
   render() {
-    return React.Children.only(this.props.children);
+    let child = this.props.children;
+    if (typeof child === 'function') {
+      child = child(this.animating);
+    }
+    return React.Children.only(child);
   }
 }
