@@ -75,7 +75,7 @@ export class Animate extends React.Component {
     if (typeof this.props.children === 'function') {
       this.setState({}); // Trigger a re-render
     }
-  }
+  };
 
   onAnimationEnd = () => {
     if (!this.animating) return;
@@ -83,13 +83,13 @@ export class Animate extends React.Component {
     if (typeof this.props.children === 'function') {
       this.setState({}); // Trigger a re-render
     }
-  }
+  };
 
   requestUpdate = () => {
     if (!this.request) {
       this.request = raf(this.performUpdate);
     }
-  }
+  };
 
   performUpdate = () => {
     this.request = null;
@@ -108,7 +108,7 @@ export class Animate extends React.Component {
     for (let key in style) {
       this.node.style[key] = style[key];
     }
-  }
+  };
 
   render() {
     let child = this.props.children;
