@@ -43,9 +43,18 @@
       .c5 {background: #5FB3B3;}
       .c6 {background: #6699CC;}
       .c7 {background: #C594C5;}
+      .loading {
+        font-size: 24px;
+        text-align: center;
+        position: relative;
+        color: #ccc;
+        top: 50vh;
+        transform: translateY(-50%);
+      }
     </style>
   </head>
   <body>
+    <div class="loading">Please wait while SystemJS does its thing...</div>
     <script src="https://jspm.io/system@0.19.js"></script>
     <script>
       System.config({

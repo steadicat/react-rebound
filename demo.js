@@ -112,4 +112,4 @@ const Demo = () =>
     <CascadeWithTensionDemo />
   </div>;
 
-ReactDOM.render(<Demo />, document.body.appendChild(document.createElement('div')));
+ReactDOM.render(<Demo />, document.body);
