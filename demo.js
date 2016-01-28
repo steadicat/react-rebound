@@ -1,6 +1,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import {Animate} from '../src/index';
+import {Animate} from './src/index';
 
 function toggle(Inner) {
   return class Component extends React.Component {
