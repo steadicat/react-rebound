@@ -24,6 +24,16 @@ import {Animate} from 'react-rebound';
 </Animate>
 ```
 
+## Configuring springs
+
+You can use props to configure the spring that’s driving the animation. The `tension` and `friction` parameters are the same as in [rebound-js](http://facebook.github.io/rebound-js/docs/rebound.html#section-11). There’s an extra parameter called `delay` which defers the animation by the specified number of milliseconds. This is useful for cascading animations.
+
+```js
+<Animate translateX={clicked ? 200 : 0} tension={200} friction={400} delay={100}>
+  <button {...props}>Click Me</button>
+</Animate>
+```
+
 ## State during animations
 
 Sometimes it’s useful to render children differently during animations. To do that, provide a function as the only child. The function takes one parameter, a boolean that tells you whether an animation is in progress:

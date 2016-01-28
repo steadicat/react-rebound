@@ -22,40 +22,47 @@ export class Animate extends React.Component {
 
   componentDidMount() {
     this.node = ReactDOM.findDOMNode(this);
+    this.triggerAnimations(this.getChild().props, this.props);
   }
 
   componentWillUpdate(nextProps) {
     // Check if this render will start an animation
-    if (!this.animating) {
-      for (let key in this.props) {
-        if (this.props[key] !== nextProps[key] && isNumeric(this.props[key]) && isNumeric(nextProps[key])) {
-          this.onAnimationStart();
-          break;
-        }
-      }
+    if (!this.animating && this.getChangedProps(this.props, nextProps).length > 0) {
+      this.onAnimationStart();
     }
   }
 
   componentDidUpdate(lastProps) {
-    for (let key in this.props) {
-      if (this.props[key] !== lastProps[key] && isNumeric(this.props[key]) && isNumeric(lastProps[key])) {
-        this.springs[key] || this.createSpring(key, lastProps[key]);
-        this.setEndValue(key, this.props[key]);
-      }
-    }
+    this.triggerAnimations(lastProps, this.props);
+  }
+
   componentWillUnmount() {
     Object.value(this.springs).forEach(spring => spring.setAtRest());
   }
 
+  triggerAnimations(lastProps, nextProps) {
+    this.getChangedProps(lastProps, nextProps).map(([prop, start, end]) => {
+      const {tension, friction, delay} = nextProps;
+      this.springs[prop] || this.createSpring(prop, start, tension, friction);
+      this.setEndValue(prop, end, delay);
+    });
   }
 
-  createSpring(key, startValue) {
+  getChangedProps(lastProps, nextProps) {
+    return Object.keys(nextProps)
+      .filter(prop =>
+        nextProps[prop] !== lastProps[prop] && isNumeric(nextProps[prop]) && isNumeric(lastProps[prop]))
+      .map(prop =>
+        [prop, lastProps[prop], nextProps[prop]]);
+  }
+
+  createSpring(key, startValue, tension = 40, friction = 7) {
     if (Array.isArray(startValue)) {
       return startValue.forEach((value, i) => {
-        this.createSpring(`${key}/${i}`, value);
+        this.createSpring(`${key}/${i}`, value, tension, friction);
       });
     }
-    this.springs[key] = springSystem.createSpring();
+    this.springs[key] = springSystem.createSpring(tension, friction);
     this.springs[key].setCurrentValue(startValue);
     this.springs[key].addListener({
       onSpringActivate: this.onAnimationStart,
@@ -64,7 +71,12 @@ export class Animate extends React.Component {
     });
   }
 
-  setEndValue(key, endValue) {
+  setEndValue(key, endValue, delay) {
+    if (delay) {
+      setTimeout(() => this.setEndValue(key, endValue), delay);
+      return;
+    }
+
     if (Array.isArray(endValue)) {
       return endValue.forEach((value, i) => {
         this.setEndValue(`${key}/${i}`, value);
@@ -114,11 +126,15 @@ export class Animate extends React.Component {
     }
   };
 
-  render() {
+  getChild() {
     let child = this.props.children;
     if (typeof child === 'function') {
       child = child(this.animating);
     }
     return React.Children.only(child);
+  }
+
+  render() {
+    return this.getChild();
   }
 }
