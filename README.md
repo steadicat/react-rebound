@@ -2,6 +2,8 @@
 
 A React component that animates its (only) child directly in the DOM for maximum performance. Spring physics based on [rebound](https://github.com/facebook/rebound-js).
 
+Check out a few simple demos [here](http://steadicat.github.io/react-rebound/).
+
 ## Examples
 
 A little “pop” on hover:
