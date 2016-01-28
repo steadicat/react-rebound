@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html>
+  <title>react-rebound demo</title>
+  <head>
+    <style>
+      h1, h2, body, button {
+        font: 16px/24px -apple-system, BlinkMacSystemFont, sans-serif;
+      }
+      body {
+        max-width: 600px;
+        padding: 0 20px;
+        margin: 0 auto;
+      }
+      a {
+        color: #6699CC;
+        text-decoration: none;
+      }
+      h1 {
+        font-weight: bold;
+        font-size: 24px;
+      }
+      h2 {
+        margin: 0;
+        padding: 0;
+        font-weight: bold;
+        margin-bottom: 5px;
+      }
+      section {
+        padding: 20px 0;
+        border-bottom: 1px solid #eee;
+      }
+      button {
+        background: teal;
+        color: white;
+        padding: 10px 20px;
+        border: none;
+        outline: none;
+      }
+      .c1 {background: #EC5f67;}
+      .c2 {background: #F99157;}
+      .c3 {background: #FAC863;}
+      .c4 {background: #99C794;}
+      .c5 {background: #5FB3B3;}
+      .c6 {background: #6699CC;}
+      .c7 {background: #C594C5;}
+    </style>
+  </head>
+  <body>
+    <script src="https://jspm.io/system@0.19.js"></script>
+    <script>
+      System.config({
+        transpiler: 'babel',
+        babelOptions: {
+          stage: "0"
+        },
+        map: {
+          'react': 'npm:react',
+          'react-dom': 'npm:react-dom',
+          'raf': 'npm:raf',
+          'stylistic': 'npm:stylistic',
+          'rebound': 'npm:rebound',
+          'babel-runtime': 'npm:babel-runtime',
+        }
+      });
+      var process = {env: {NODE_ENV: 'production'}};
+      System.import('./demo.js');
+    </script>
+  </body>
+</html>
