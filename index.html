@@ -57,7 +57,7 @@
   </head>
   <body>
     <div class="loading">Please wait while SystemJS does its thing...</div>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/systemjs/0.19.17/system.js"></script>
+    <script src="https://jspm.io/system@0.19.js"></script>
     <script>
       var timeout;
       timeout = setTimeout(function() {
@@ -68,13 +68,18 @@
         var loading = document.getElementsByClassName('loading');
         loading[0] && (loading[0].innerHTML = 'This is taking an afwully long time. I blame jspm.io. You&rsquo;re probably better off grabbing <a href="https://github.com/steadicat/react-rebound/blob/master/demo.js">the source</a> and running it yourself.');
       }, 6000);
+
       System.config({
         transpiler: 'babel',
         babelOptions: {
           stage: "0"
         },
-        paths: {
-          '*': 'https://npm.jspm.io/*.js',
+        map: {
+          'react': 'npm:react',
+          'react-dom': 'npm:react-dom',
+          'raf': 'npm:raf',
+          'stylistic': 'npm:stylistic',
+          'rebound': 'npm:rebound',
         }
       });
       var process = {env: {NODE_ENV: 'production'}};
