@@ -65,33 +65,33 @@ const FrictionAndTensionDemo = toggle(({toggled, ...props}) =>
 );
 
 const CascadeWithDelayDemo = toggle(({toggled, ...props}) =>
-  <section>
+  <section {...props}>
     <h2>Cascade with delay</h2>
-    {[ 1, 2, 3, 4, 5, 6, 7].map(index =>
+    {[1, 2, 3, 4, 5, 6, 7].map(index =>
       <Animate key={index} translateX={toggled ? 200 : 0} delay={index * 20}>
-        <button className={`c${index}`} style={{display: 'block', margin: '10px 0'}} {...props}>Click Me</button>
+        <button className={`c${index}`} style={{display: 'block', margin: '10px 0'}}>Click Me</button>
       </Animate>
     )}
   </section>
 );
 
 const CascadeWithFrictionDemo = toggle(({toggled, ...props}) =>
-  <section>
+  <section {...props}>
     <h2>Cascade with friction</h2>
-    {[ 1, 2, 3, 4, 5, 6, 7].map(index =>
+    {[1, 2, 3, 4, 5, 6, 7].map(index =>
       <Animate key={index} translateX={toggled ? 200 : 0} friction={10 + index * 1}>
-        <button className={`c${index}`} style={{display: 'block', margin: '10px 0'}} {...props}>Click Me</button>
+        <button className={`c${index}`} style={{display: 'block', margin: '10px 0'}}>Click Me</button>
       </Animate>
     )}
   </section>
 );
 
 const CascadeWithTensionDemo = toggle(({toggled, ...props}) =>
-  <section>
+  <section {...props}>
     <h2>Cascade with tension</h2>
-    {[ 1, 2, 3, 4, 5, 6, 7].map(index =>
+    {[1, 2, 3, 4, 5, 6, 7].map(index =>
       <Animate key={index} translateX={toggled ? 200 : 0} tension={(10 - index) * 5}>
-        <button className={`c${index}`} style={{display: 'block', margin: '10px 0'}} {...props}>Click Me</button>
+        <button className={`c${index}`} style={{display: 'block', margin: '10px 0'}}>Click Me</button>
       </Animate>
     )}
   </section>
