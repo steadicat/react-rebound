@@ -45,34 +45,45 @@
       .c7 {background: #C594C5;}
       .loading {
         font-size: 24px;
+        line-height: 36px;
         text-align: center;
         position: relative;
         color: #ccc;
         top: 50vh;
         transform: translateY(-50%);
+        white-space: pre-wrap;
       }
     </style>
   </head>
   <body>
     <div class="loading">Please wait while SystemJS does its thing...</div>
-    <script src="https://jspm.io/system@0.19.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/systemjs/0.19.17/system.js"></script>
     <script>
+      var timeout;
+      timeout = setTimeout(function() {
+        var loading = document.getElementsByClassName('loading');
+        loading[0] && (loading[0].innerHTML = 'Any minute now...');
+      }, 3000);
+      timeout = setTimeout(function() {
+        var loading = document.getElementsByClassName('loading');
+        loading[0] && (loading[0].innerHTML = 'This is taking an afwully long time. I blame jspm.io. You&rsquo;re probably better off grabbing <a href="https://github.com/steadicat/react-rebound/blob/master/demo.js">the source</a> and running it yourself.');
+      }, 6000);
       System.config({
         transpiler: 'babel',
         babelOptions: {
           stage: "0"
         },
-        map: {
-          'react': 'npm:react',
-          'react-dom': 'npm:react-dom',
-          'raf': 'npm:raf',
-          'stylistic': 'npm:stylistic',
-          'rebound': 'npm:rebound',
-          'babel-runtime': 'npm:babel-runtime',
+        paths: {
+          '*': 'https://npm.jspm.io/*.js',
         }
       });
       var process = {env: {NODE_ENV: 'production'}};
-      System.import('./demo.js');
+      System.import('./demo.js').catch(function(e) {
+        clearTimeout(timeout);
+        console.error(e);
+        var loading = document.getElementsByClassName('loading');
+        loading[0] && (loading[0].innerHTML = 'Oops, something broke (probably jspm.io). Check the console for deets. Anyway, you&rsquo;re better off grabbing <a href="https://github.com/steadicat/react-rebound/blob/master/demo.js">the source</a> and running it yourself.');
+      });
     </script>
   </body>
 </html>
