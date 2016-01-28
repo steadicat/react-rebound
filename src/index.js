@@ -43,6 +43,10 @@ export class Animate extends React.Component {
         this.setEndValue(key, this.props[key]);
       }
     }
+  componentWillUnmount() {
+    Object.value(this.springs).forEach(spring => spring.setAtRest());
+  }
+
   }
 
   createSpring(key, startValue) {
