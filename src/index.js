@@ -37,7 +37,9 @@ export class Animate extends React.Component {
   }
 
   componentWillUnmount() {
-    Object.values(this.springs).forEach(spring => spring.setAtRest());
+    for (let prop in this.springs) {
+      this.springs[prop].setAtRest();
+    }
   }
 
   triggerAnimations(lastProps, nextProps) {
