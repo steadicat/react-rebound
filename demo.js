@@ -112,4 +112,4 @@ const Demo = () =>
     <CascadeWithTensionDemo />
   </div>;
 
-ReactDOM.render(<Demo />, document.body);
+ReactDOM.render(<Demo />, document.getElementById('wrapper'));
