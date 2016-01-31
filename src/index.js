@@ -50,8 +50,13 @@ export class Animate extends React.Component {
     });
   }
 
+  isNotSpecialProp(prop) {
+    return ['tension', 'friction', 'delay', 'onStart', 'onEnd'].indexOf(prop) < 0;
+  }
+
   getChangedProps(lastProps, nextProps) {
     return Object.keys(nextProps)
+      .filter(this.isNotSpecialProp)
       .filter(prop =>
         nextProps[prop] !== lastProps[prop] && isNumeric(nextProps[prop]) && isNumeric(lastProps[prop]))
       .map(prop =>
@@ -93,6 +98,7 @@ export class Animate extends React.Component {
     if (typeof this.props.children === 'function') {
       this.setState({}); // Trigger a re-render
     }
+    this.props.onStart && this.props.onStart();
   };
 
   onAnimationEnd = () => {
@@ -101,6 +107,7 @@ export class Animate extends React.Component {
     if (typeof this.props.children === 'function') {
       this.setState({}); // Trigger a re-render
     }
+    this.props.onEnd && this.props.onEnd();
   };
 
   requestUpdate = () => {

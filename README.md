@@ -48,6 +48,20 @@ import {Animate} from 'react-rebound';
 </Animate>
 ```
 
+## Start and end callbacks
+
+In complex situations it might be useful to be notified when an animation starts or ends. `Animate` provides two callbacks, `onStart` and `onEnd`:
+
+```js
+<Animate
+  scaleX={expanded ? 5 : 1}
+  scaleY={expanded ? 5 : 1}
+  onStart={actions.onExpandStart}
+  onEnd={actions.onExpandEnd}>
+  <img {...props} />
+</Animate>
+```
+
 ## Supported attributes
 
 See [stylistic](https://github.com/steadicat/stylistic) for the list of supported attributes, though for performance you should try to stick to the transforms and opacity only.
