@@ -37,6 +37,7 @@ export class Animate extends React.Component {
   }
 
   componentWillUnmount() {
+    this.animating = false;
     for (let prop in this.springs) {
       this.springs[prop].setAtRest();
     }
