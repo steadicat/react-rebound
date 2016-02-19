@@ -31,7 +31,7 @@
     "react": "0.14.x",
     "react-dom": "0.14.x",
     "rebound": "0.0.x",
-    "stylistic": "0.0.x"
+    "stylistic": "0.1.x"
   },
   "devDependencies": {
     "babel-cli": "6.4.x",
