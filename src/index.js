@@ -3,11 +3,12 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import rebound from 'rebound';
 import {extract} from 'stylistic';
+/* global setTimeout */
 
 const springSystem = new rebound.SpringSystem();
 
 function isNumeric(n) {
-  if (Array.isArray(n)) return n.every((x) => typeof x === 'number');
+  if (Array.isArray(n)) return n.every(x => typeof x === 'number');
   return typeof n === 'number';
 }
 
