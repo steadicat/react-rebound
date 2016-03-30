@@ -4,10 +4,10 @@ import commonjs from 'rollup-plugin-commonjs';
 
 export default {
   entry: 'src/index.js',
-  moduleName: 'ReactRebound',
   plugins: [
     babel({
       presets: ['es2015-rollup', 'react', 'stage-0'],
+      exclude: 'node_modules/**',
     }),
     nodeResolve({
       jsnext: true,

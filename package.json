@@ -27,24 +27,26 @@
     "motion"
   ],
   "dependencies": {
-    "react": "0.14.x",
-    "react-dom": "0.14.x",
     "rebound": "0.0.x",
     "stylistic": "0.2.x"
   },
+  "peerDependencies": {
+    "react": "0.14.x || >15.0.0-rc",
+    "react-dom": "0.14.x || >15.0.0-rc"
+  },
   "devDependencies": {
-    "babel-eslint": ">6.0.0-beta",
-    "babel-preset-es2015-rollup": "1.1.x",
-    "babel-preset-react": "6.5.x",
-    "babel-preset-stage-0": "6.5.x",
-    "eslint": "2.4.x",
-    "eslint-plugin-babel": "3.1.x",
-    "eslint-plugin-react": "4.2.x",
-    "raf": "3.2.x",
-    "rollup": "0.25.x",
-    "rollup-plugin-babel": "2.4.x",
-    "rollup-plugin-commonjs": "2.2.x",
-    "rollup-plugin-node-resolve": "1.5.x"
+    "babel-eslint": "6.0.0",
+    "babel-preset-es2015-rollup": "1.1.1",
+    "babel-preset-react": "6.5.0",
+    "babel-preset-stage-0": "6.5.0",
+    "eslint": "2.5.3",
+    "eslint-plugin-babel": "3.1.0",
+    "eslint-plugin-react": "4.2.3",
+    "raf": "3.2.0",
+    "rollup": "0.25.7",
+    "rollup-plugin-babel": "2.4.0",
+    "rollup-plugin-commonjs": "2.2.1",
+    "rollup-plugin-node-resolve": "1.5.0"
   },
   "license": "MIT"
 }
