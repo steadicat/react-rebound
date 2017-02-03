@@ -25,12 +25,6 @@ export class Animate extends React.Component {
     animate: true,
   };
 
-  componentWillMount() {
-    if (this.props.updateOnMount) {
-      this.requestUpdate();
-    }
-  }
-
   componentDidMount() {
     this.node = ReactDOM.findDOMNode(this);
     this.triggerAnimations(this.getChild().props, this.props);
