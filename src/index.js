@@ -21,6 +21,10 @@ export class Animate extends React.Component {
     this.animating = false;
   }
 
+  defaultProps = {
+    animate: true,
+  };
+
   componentWillMount() {
     if (this.props.updateOnMount) {
       this.requestUpdate();
@@ -55,7 +59,7 @@ export class Animate extends React.Component {
       const {tension, friction, delay, animate} = nextProps;
       this.springs[prop] || this.createSpring(prop, start, tension, friction, animate);
 
-      if (animate || animate === undefined) {
+      if (animate) {
         this.setEndValue(prop, end, delay);
       } else {
         this.springs[prop].setCurrentValue(end).setAtRest();
@@ -76,7 +80,7 @@ export class Animate extends React.Component {
         [prop, lastProps[prop], nextProps[prop]]);
   }
 
-  createSpring(key, startValue, tension = 40, friction = 7, animate = true) {
+  createSpring(key, startValue, tension = 40, friction = 7) {
     if (Array.isArray(startValue)) {
       return startValue.forEach((value, i) => {
         this.createSpring(`${key}/${i}`, value, tension, friction);
