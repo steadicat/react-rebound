@@ -51,7 +51,7 @@ export class Animate extends React.Component {
   triggerAnimations(lastProps, nextProps) {
     this.getChangedProps(lastProps, nextProps).map(([prop, start, end]) => {
       const {tension, friction, delay, animate} = nextProps;
-      this.springs[prop] || this.createSpring(prop, start, tension, friction, animate);
+      this.springs[prop] || this.createSpring(prop, start, tension, friction);
 
       if (animate) {
         this.setEndValue(prop, end, delay);
