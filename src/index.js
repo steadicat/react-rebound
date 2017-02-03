@@ -21,6 +21,10 @@ export class Animate extends React.Component {
     this.animating = false;
   }
 
+  defaultProps = {
+    animate: true,
+  };
+
   componentDidMount() {
     this.node = ReactDOM.findDOMNode(this);
     this.triggerAnimations(this.getChild().props, this.props);
@@ -46,9 +50,14 @@ export class Animate extends React.Component {
 
   triggerAnimations(lastProps, nextProps) {
     this.getChangedProps(lastProps, nextProps).map(([prop, start, end]) => {
-      const {tension, friction, delay} = nextProps;
-      this.springs[prop] || this.createSpring(prop, start, tension, friction);
-      this.setEndValue(prop, end, delay);
+      const {tension, friction, delay, animate} = nextProps;
+      this.springs[prop] || this.createSpring(prop, start, tension, friction, animate);
+
+      if (animate) {
+        this.setEndValue(prop, end, delay);
+      } else {
+        this.springs[prop].setCurrentValue(end).setAtRest();
+      }
     });
   }
 
