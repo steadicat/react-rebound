@@ -21,7 +21,7 @@ export class Animate extends React.Component {
     this.animating = false;
   }
 
-  defaultProps = {
+  static defaultProps = {
     animate: true,
   };
 
