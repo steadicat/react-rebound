@@ -32,7 +32,7 @@
   },
   "peerDependencies": {
     "react": "^0.14.0 || ^15.0.0 || >=16.0.0-alpha",
-    "react-dom": "^^0.14.0 || ^15.0.0 || >=16.0.0-alpha"
+    "react-dom": "^0.14.0 || ^15.0.0 || >=16.0.0-alpha"
   },
   "devDependencies": {
     "babel-eslint": "^7.1.1",
@@ -43,6 +43,8 @@
     "eslint-plugin-babel": "^4.0.1",
     "eslint-plugin-react": "^6.9.0",
     "raf": "^3.3.0",
+    "react": "^15.0.0",
+    "react-dom": "^15.0.0",
     "rollup": "^0.41.4",
     "rollup-plugin-babel": "^2.7.1",
     "rollup-plugin-commonjs": "^7.0.0",
