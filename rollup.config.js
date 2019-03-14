@@ -1,21 +1,34 @@
-import babel from 'rollup-plugin-babel';
-import nodeResolve from 'rollup-plugin-node-resolve';
+import typescript from 'rollup-plugin-typescript2';
+import resolve from 'rollup-plugin-node-resolve';
+import replace from 'rollup-plugin-replace';
 import commonjs from 'rollup-plugin-commonjs';
 
-export default {
-  entry: 'src/index.js',
-  plugins: [
-    babel({
-      presets: ['es2015-rollup', 'react', 'stage-0'],
-      exclude: 'node_modules/**',
-    }),
-    nodeResolve({
-      jsnext: true,
-      main: true,
-      skip: ['react', 'react-dom', 'rebound', 'stylistic'],
-    }),
-    commonjs({
-      include: 'node_modules/**',
-    }),
-  ],
-};
+export default [
+  {
+    input: './src/index.ts',
+    output: [{file: './dist/index.js', format: 'cjs'}, {file: './dist/index.es.js', format: 'es'}],
+    plugins: [
+      typescript({
+        typescript: require('typescript'),
+        check: false,
+      }),
+    ],
+  },
+  {
+    input: './demo.tsx',
+    output: [{file: './demo.js', format: 'iife'}],
+    plugins: [
+      resolve({
+        browser: true,
+      }),
+      typescript({
+        typescript: require('typescript'),
+        check: false,
+      }),
+      replace({
+        'process.env.NODE_ENV': JSON.stringify('production'),
+      }),
+      commonjs(),
+    ],
+  },
+];

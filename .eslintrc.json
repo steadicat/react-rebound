@@ -1,0 +1,112 @@
+{
+  "parser": "@typescript-eslint/parser",
+  "parserOptions": {
+    "jsx": true
+  },
+  "extends": [
+    "eslint:recommended",
+    "problems",
+    "plugin:@typescript-eslint/recommended",
+    "plugin:react/all",
+    "prettier",
+    "prettier/@typescript-eslint"
+  ],
+  "plugins": ["@typescript-eslint", "react", "react-hooks"],
+  "rules": {
+    "@typescript-eslint/explicit-function-return-type": "off",
+    "react/jsx-filename-extension": ["warn", {"extensions": [".tsx"]}],
+    "react/jsx-handler-names": [
+      "warn",
+      {"eventHandlerPrefix": "on", "eventHandlerPropPrefix": "on"}
+    ],
+
+    // Common sources of bugs
+    "no-inner-declarations": "error",
+    "react-hooks/rules-of-hooks": "error",
+    "react-hooks/exhaustive-deps": "error",
+
+    // Potential syntax pitfalls
+    "no-bitwise": "warn",
+    "no-cond-assign": "warn",
+
+    // Other pitfalls?
+    "no-constant-condition": "warn",
+    "no-control-regex": "warn",
+    "no-duplicate-case": "warn",
+    "no-empty-character-class": "warn",
+    "no-ex-assign": "warn",
+    "no-extra-boolean-cast": "warn",
+    "no-invalid-regexp": "warn",
+    "no-regex-spaces": "warn",
+    "no-shadow": "warn",
+    "valid-typeof": "warn",
+    "prefer-template": "warn",
+    "no-sparse-arrays": "warn",
+
+    // Redundant because of TypeScript
+    "no-undef": "off",
+    "no-unused-vars": "off",
+
+    // Redundant because of Prettier
+    "react/jsx-indent": "off",
+    "react/jsx-indent-props": "off",
+    "react/jsx-closing-bracket-location": "off",
+    "react/jsx-max-depth": "off",
+    "react/jsx-max-props-per-line": "off",
+    "react/jsx-one-expression-per-line": "off",
+    "react/jsx-child-element-spacing": "off",
+
+    // Downgrade
+
+    // Annoying syntax quirks
+    "no-underscore-dangle": "warn",
+
+    // Questionable
+    "@typescript-eslint/prefer-interface": "off",
+    "@typescript-eslint/interface-name-prefix": "off",
+    "@typescript-eslint/no-object-literal-type-assertion": "off",
+    "react/jsx-no-literals": "off",
+    "react/jsx-sort-props": "off",
+    "react/no-array-index-key": "off",
+    "react/no-set-state": "off",
+    "react/no-multi-comp": "off",
+    "react/button-has-type": "off",
+
+    // Too ambitious
+    "react/display-name": "off",
+    "@typescript-eslint/no-non-null-assertion": "off",
+
+    // Other
+    "brace-style": ["warn", "1tbs", {"allowSingleLine": false}],
+    "camelcase": 1,
+    "comma-dangle": ["warn", "always-multiline"],
+    "comma-style": ["warn", "last"],
+    "curly": ["warn", "multi-line"],
+    "eol-last": "warn",
+    "eqeqeq": [1, "smart"],
+    "generator-star-spacing": ["warn", "before"],
+    "jsx-quotes": "warn",
+    "key-spacing": "warn",
+    "no-func-assign": "warn",
+    "no-lonely-if": 1,
+    "no-loop-func": 1,
+    "no-nested-ternary": 0,
+    "no-shadow-restricted-names": 1,
+    "no-throw-literal": "warn",
+    "object-curly-spacing": 0,
+    "radix": "warn",
+    "react/forbid-prop-types": "warn",
+    "react/jsx-curly-spacing": "warn",
+    "react/jsx-no-duplicate-props": "warn",
+    "react/jsx-no-undef": "warn",
+    "react/jsx-uses-react": "warn",
+    "react/jsx-uses-vars": "warn",
+    "react/no-did-mount-set-state": "warn",
+    "react/no-did-update-set-state": "warn",
+    "react/no-direct-mutation-state": "warn",
+    "react/no-unknown-property": "warn",
+    "react/prefer-es6-class": 1,
+    "react/react-in-jsx-scope": "warn",
+    "react/self-closing-comp": "warn"
+  }
+}

@@ -56,50 +56,7 @@
     </style>
   </head>
   <body>
-    <div id="wrapper">
-      <div class="loading">Please wait while SystemJS does its thing...</div>
-    </div>
-    <script src="https://jspm.io/system@0.19.js"></script>
-    <script>
-      function setLoadingText(text) {
-        var loading = document.getElementsByClassName('loading');
-        loading[0] && (loading[0].innerHTML = text);
-      }
-
-      var timeout;
-      timeout = setTimeout(function() {
-        setLoadingText('Any minute now...')
-        timeout = setTimeout(function() {
-          setLoadingText('This is taking an afwully long time. I blame jspm.io. You&rsquo;re probably better off grabbing <a href="https://github.com/steadicat/react-rebound/blob/master/demo.js">the source</a> and running it yourself.');
-        }, 3000);
-      }, 3000);
-
-      try {
-        System.config({
-          transpiler: 'babel',
-          babelOptions: {
-            stage: "0"
-          },
-          map: {
-            'react': 'npm:react',
-            'react-dom': 'npm:react-dom',
-            'raf': 'npm:raf',
-            'stylistic': 'npm:stylistic',
-            'rebound': 'npm:rebound',
-          }
-        });
-
-        var process = {env: {NODE_ENV: 'production'}};
-        System.import('./demo.js').catch(function(e) {
-          clearTimeout(timeout);
-          console.error(e);
-          setLoadingText('Oops, something broke (probably jspm.io). Check the console for deets. Anyway, you&rsquo;re better off grabbing <a href="https://github.com/steadicat/react-rebound/blob/master/demo.js">the source</a> and running it yourself.');
-        });
-      } catch (e) {
-        clearTimeout(timeout);
-        console.error(e);
-        setLoadingText('Oops, something broke (probably jspm.io). Check the console for deets. Anyway, you&rsquo;re better off grabbing <a href="https://github.com/steadicat/react-rebound/blob/master/demo.js">the source</a> and running it yourself.');
-      }
-    </script>
+    <div id="wrapper"></div>
+    <script src="./demo.js"></script>
   </body>
 </html>

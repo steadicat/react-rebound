@@ -1,0 +1,30 @@
+{
+  "compilerOptions": {
+    "outDir": "./dist",
+    "declaration": true,
+    "declarationDir": "./dist",
+    "target": "es5",
+    "sourceMap": true,
+    "inlineSources": true,
+    "jsx": "react",
+    "importHelpers": true,
+    "module": "esNext",
+    "moduleResolution": "node",
+    "esModuleInterop": true,
+    "strict": true,
+    "noEmit": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "noFallthroughCasesInSwitch": true,
+    "noImplicitReturns": true,
+    "lib": [
+      "dom",
+      "es2017"
+    ]
+  },
+  "include": [
+    "src/**/*.ts",
+    "src/**/*.tsx",
+  ],
+  "exclude": ["node_modules"],
+}

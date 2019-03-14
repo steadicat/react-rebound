@@ -1,2 +1,4 @@
-index.js
-index.es2015.js
+dist
+.cache
+.rpt2_cache
+demo.d.ts
