@@ -35,7 +35,7 @@ const TranslateDemo = toggle(({toggled, ...props}) => (
 const FrictionDemo = toggle(({toggled, ...props}) => (
   <section>
     <h2>Translate with high friction</h2>
-    <Animate translateX={toggled ? 200 : 0} friction={400}>
+    <Animate translateX={toggled ? 200 : 0} friction={200}>
       <button className="c3" {...props}>
         Click Me
       </button>
@@ -46,7 +46,7 @@ const FrictionDemo = toggle(({toggled, ...props}) => (
 const TensionDemo = toggle(({toggled, ...props}) => (
   <section>
     <h2>Translate with high tension</h2>
-    <Animate translateX={toggled ? 200 : 0} tension={400}>
+    <Animate translateX={toggled ? 200 : 0} tension={1000}>
       <button className="c4" {...props}>
         Click Me
       </button>
@@ -57,7 +57,7 @@ const TensionDemo = toggle(({toggled, ...props}) => (
 const FrictionAndTensionDemo = toggle(({toggled, ...props}) => (
   <section>
     <h2>Translate with high friction and tension</h2>
-    <Animate translateX={toggled ? 200 : 0} friction={400} tension={400}>
+    <Animate translateX={toggled ? 200 : 0} friction={400} tension={2000}>
       <button className="c5" {...props}>
         Click Me
       </button>
@@ -82,7 +82,7 @@ const CascadeWithFrictionDemo = toggle(({toggled, ...props}) => (
   <section {...props}>
     <h2>Cascade with friction</h2>
     {[1, 2, 3, 4, 5, 6, 7].map(index => (
-      <Animate key={index} translateX={toggled ? 200 : 0} friction={10 + index * 1}>
+      <Animate key={index} translateX={toggled ? 200 : 0} friction={5 + index * 1}>
         <button className={`c${index}`} style={{display: 'block', margin: '10px 0'}}>
           Click Me
         </button>
@@ -95,7 +95,7 @@ const CascadeWithTensionDemo = toggle(({toggled, ...props}) => (
   <section {...props}>
     <h2>Cascade with tension</h2>
     {[1, 2, 3, 4, 5, 6, 7].map(index => (
-      <Animate key={index} translateX={toggled ? 200 : 0} tension={(10 - index) * 5}>
+      <Animate key={index} translateX={toggled ? 200 : 0} tension={(10 - index) * 20}>
         <button className={`c${index}`} style={{display: 'block', margin: '10px 0'}}>
           Click Me
         </button>
@@ -115,7 +115,6 @@ const ColorDemo = toggle(({toggled, ...props}) => (
 
 const DragDemo = () => {
   const animation = React.useRef<AnimateAPI>();
-  const [x, setX] = React.useState(0);
   const lastDrag = React.useRef(null);
   const velocity = React.useRef(null);
   const onDragStart = React.useCallback((event: React.MouseEvent) => {
@@ -124,26 +123,27 @@ const DragDemo = () => {
   const onMouseMove = React.useCallback((event: React.MouseEvent) => {
     if (lastDrag.current === null) return;
     velocity.current = event.clientX - lastDrag.current;
-    setX(v => v + velocity.current);
+    animation.current.setCurrentValue(
+      'translateX',
+      animation.current.getCurrentValue('translateX') + velocity.current,
+    );
     lastDrag.current = event.clientX;
   }, []);
   const onDragEnd = React.useCallback(() => {
     if (lastDrag.current === null) return;
     lastDrag.current = null;
-    animation.current.setVelocity('translateX', velocity.current);
+    animation.current.setVelocity('translateX', velocity.current * 100);
     velocity.current = 0;
   }, []);
+
   return (
-    <section>
+    <section onMouseMove={onMouseMove} onMouseUp={onDragEnd} onMouseLeave={onDragEnd}>
       <h2>Drag with momentum</h2>
-      <Animate ref={animation} translateX={x} animate={lastDrag.current === null} tension={0}>
+      <Animate ref={animation} translateX={0} tension={0}>
         <button
           className="c1"
           style={{display: 'block', margin: '10px 0'}}
-          onMouseDown={onDragStart}
-          onMouseMove={onMouseMove}
-          onMouseUp={onDragEnd}
-          onMouseLeave={onDragEnd}>
+          onMouseDown={onDragStart}>
           Drag Me
         </button>
       </Animate>

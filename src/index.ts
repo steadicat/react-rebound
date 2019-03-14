@@ -9,13 +9,19 @@ const springSystem = new rebound.SpringSystem();
 
 export interface AnimateAPI {
   setVelocity(prop: keyof AnimatableProps, value: number): void;
+  setCurrentValue(prop: keyof AnimatableProps, value: number): void;
+  getCurrentValue(prop: keyof AnimatableProps): number | number[];
+}
+
+function convertTension(n: number) {
+  return (n - 194.0) / 3.62 + 30.0;
 }
 
 export const Animate = React.forwardRef(
   (
     {
       animate = true,
-      tension = 40,
+      tension = 400,
       friction = 7,
       delay = 0,
       onStart,
@@ -47,6 +53,12 @@ export const Animate = React.forwardRef(
       () => ({
         setVelocity(prop: keyof AnimatableProps, value: number) {
           springs.current[prop] && springs.current[prop]!.setVelocity(value);
+        },
+        setCurrentValue(prop: keyof AnimatableProps, value: number) {
+          springs.current[prop] && springs.current[prop]!.setCurrentValue(value);
+        },
+        getCurrentValue(prop: keyof AnimatableProps) {
+          return springs.current[prop] && springs.current[prop]!.getCurrentValue();
         },
       }),
       [],
@@ -118,10 +130,10 @@ export const Animate = React.forwardRef(
       function createSpring(startValue: number | number[]) {
         let spring;
         if (Array.isArray(startValue)) {
-          spring = new MultiSpring(springSystem);
+          spring = new MultiSpring(springSystem, convertTension(tension), friction);
           spring.setCurrentValue(startValue);
         } else {
-          spring = springSystem.createSpring(tension, friction);
+          spring = springSystem.createSpring(convertTension(tension), friction);
           spring.setCurrentValue(startValue);
         }
         spring.addListener({onSpringActivate, onSpringAtRest, onSpringUpdate});

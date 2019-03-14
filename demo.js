@@ -1906,9 +1906,11 @@
     });
 
     var MultiSpring = /** @class */ (function () {
-        function MultiSpring(system) {
+        function MultiSpring(system, tension, friction) {
             this.springs = [];
             this.system = system;
+            this.tension = tension;
+            this.friction = friction;
         }
         MultiSpring.prototype.destroy = function () {
             for (var _i = 0, _a = this.springs; _i < _a.length; _i++) {
@@ -1932,7 +1934,7 @@
         MultiSpring.prototype.setEndValue = function (value) {
             for (var i = 0; i < value.length; i++) {
                 if (!this.springs[i])
-                    this.springs[i] = this.system.createSpring();
+                    this.springs[i] = this.system.createSpring(this.tension, this.friction);
                 this.springs[i].setEndValue(value[i]);
             }
         };
@@ -2109,8 +2111,11 @@
     }
 
     var springSystem = new rebound.SpringSystem();
+    function convertTension(n) {
+        return (n - 194.0) / 3.62 + 30.0;
+    }
     var Animate = react.forwardRef(function (_a, forwardedRef) {
-        var _b = _a.animate, animate = _b === void 0 ? true : _b, _c = _a.tension, tension = _c === void 0 ? 40 : _c, _d = _a.friction, friction = _d === void 0 ? 7 : _d, _e = _a.delay, delay = _e === void 0 ? 0 : _e, onStart = _a.onStart, onEnd = _a.onEnd, children = _a.children, props = __rest(_a, ["animate", "tension", "friction", "delay", "onStart", "onEnd", "children"]);
+        var _b = _a.animate, animate = _b === void 0 ? true : _b, _c = _a.tension, tension = _c === void 0 ? 400 : _c, _d = _a.friction, friction = _d === void 0 ? 7 : _d, _e = _a.delay, delay = _e === void 0 ? 0 : _e, onStart = _a.onStart, onEnd = _a.onEnd, children = _a.children, props = __rest(_a, ["animate", "tension", "friction", "delay", "onStart", "onEnd", "children"]);
         var ref = react.useRef();
         var _f = react.useState(null), setState = _f[1];
         var springs = react.useRef({});
@@ -2119,6 +2124,12 @@
         react.useImperativeHandle(forwardedRef, function () { return ({
             setVelocity: function (prop, value) {
                 springs.current[prop] && springs.current[prop].setVelocity(value);
+            },
+            setCurrentValue: function (prop, value) {
+                springs.current[prop] && springs.current[prop].setCurrentValue(value);
+            },
+            getCurrentValue: function (prop) {
+                return springs.current[prop] && springs.current[prop].getCurrentValue();
             },
         }); }, []);
         var latestChildren = react.useRef(children);
@@ -2172,11 +2183,11 @@
             function createSpring(startValue) {
                 var spring;
                 if (Array.isArray(startValue)) {
-                    spring = new MultiSpring(springSystem);
+                    spring = new MultiSpring(springSystem, convertTension(tension), friction);
                     spring.setCurrentValue(startValue);
                 }
                 else {
-                    spring = springSystem.createSpring(tension, friction);
+                    spring = springSystem.createSpring(convertTension(tension), friction);
                     spring.setCurrentValue(startValue);
                 }
                 spring.addListener({ onSpringActivate: onSpringActivate, onSpringAtRest: onSpringAtRest, onSpringUpdate: onSpringUpdate });
@@ -2250,21 +2261,21 @@
         var toggled = _a.toggled, props = __rest(_a, ["toggled"]);
         return (react.createElement("section", null,
             react.createElement("h2", null, "Translate with high friction"),
-            react.createElement(Animate, { translateX: toggled ? 200 : 0, friction: 400 },
+            react.createElement(Animate, { translateX: toggled ? 200 : 0, friction: 200 },
                 react.createElement("button", __assign({ className: "c3" }, props), "Click Me"))));
     });
     var TensionDemo = toggle(function (_a) {
         var toggled = _a.toggled, props = __rest(_a, ["toggled"]);
         return (react.createElement("section", null,
             react.createElement("h2", null, "Translate with high tension"),
-            react.createElement(Animate, { translateX: toggled ? 200 : 0, tension: 400 },
+            react.createElement(Animate, { translateX: toggled ? 200 : 0, tension: 1000 },
                 react.createElement("button", __assign({ className: "c4" }, props), "Click Me"))));
     });
     var FrictionAndTensionDemo = toggle(function (_a) {
         var toggled = _a.toggled, props = __rest(_a, ["toggled"]);
         return (react.createElement("section", null,
             react.createElement("h2", null, "Translate with high friction and tension"),
-            react.createElement(Animate, { translateX: toggled ? 200 : 0, friction: 400, tension: 400 },
+            react.createElement(Animate, { translateX: toggled ? 200 : 0, friction: 400, tension: 2000 },
                 react.createElement("button", __assign({ className: "c5" }, props), "Click Me"))));
     });
     var CascadeWithDelayDemo = toggle(function (_a) {
@@ -2278,14 +2289,14 @@
         var toggled = _a.toggled, props = __rest(_a, ["toggled"]);
         return (react.createElement("section", __assign({}, props),
             react.createElement("h2", null, "Cascade with friction"),
-            [1, 2, 3, 4, 5, 6, 7].map(function (index) { return (react.createElement(Animate, { key: index, translateX: toggled ? 200 : 0, friction: 10 + index * 1 },
+            [1, 2, 3, 4, 5, 6, 7].map(function (index) { return (react.createElement(Animate, { key: index, translateX: toggled ? 200 : 0, friction: 5 + index * 1 },
                 react.createElement("button", { className: "c" + index, style: { display: 'block', margin: '10px 0' } }, "Click Me"))); })));
     });
     var CascadeWithTensionDemo = toggle(function (_a) {
         var toggled = _a.toggled, props = __rest(_a, ["toggled"]);
         return (react.createElement("section", __assign({}, props),
             react.createElement("h2", null, "Cascade with tension"),
-            [1, 2, 3, 4, 5, 6, 7].map(function (index) { return (react.createElement(Animate, { key: index, translateX: toggled ? 200 : 0, tension: (10 - index) * 5 },
+            [1, 2, 3, 4, 5, 6, 7].map(function (index) { return (react.createElement(Animate, { key: index, translateX: toggled ? 200 : 0, tension: (10 - index) * 20 },
                 react.createElement("button", { className: "c" + index, style: { display: 'block', margin: '10px 0' } }, "Click Me"))); })));
     });
     var ColorDemo = toggle(function (_a) {
@@ -2297,7 +2308,6 @@
     });
     var DragDemo = function () {
         var animation = react.useRef();
-        var _a = react.useState(0), x = _a[0], setX = _a[1];
         var lastDrag = react.useRef(null);
         var velocity = react.useRef(null);
         var onDragStart = react.useCallback(function (event) {
@@ -2307,20 +2317,20 @@
             if (lastDrag.current === null)
                 return;
             velocity.current = event.clientX - lastDrag.current;
-            setX(function (v) { return v + velocity.current; });
+            animation.current.setCurrentValue('translateX', animation.current.getCurrentValue('translateX') + velocity.current);
             lastDrag.current = event.clientX;
         }, []);
         var onDragEnd = react.useCallback(function () {
             if (lastDrag.current === null)
                 return;
             lastDrag.current = null;
-            animation.current.setVelocity('translateX', velocity.current);
+            animation.current.setVelocity('translateX', velocity.current * 100);
             velocity.current = 0;
         }, []);
-        return (react.createElement("section", null,
+        return (react.createElement("section", { onMouseMove: onMouseMove, onMouseUp: onDragEnd, onMouseLeave: onDragEnd },
             react.createElement("h2", null, "Drag with momentum"),
-            react.createElement(Animate, { ref: animation, translateX: x, animate: lastDrag.current === null, tension: 0 },
-                react.createElement("button", { className: "c1", style: { display: 'block', margin: '10px 0' }, onMouseDown: onDragStart, onMouseMove: onMouseMove, onMouseUp: onDragEnd, onMouseLeave: onDragEnd }, "Drag Me"))));
+            react.createElement(Animate, { ref: animation, translateX: 0, tension: 0 },
+                react.createElement("button", { className: "c1", style: { display: 'block', margin: '10px 0' }, onMouseDown: onDragStart }, "Drag Me"))));
     };
     var Demo = function () { return (react.createElement("div", null,
         react.createElement("h1", null, "react-rebound demos"),
