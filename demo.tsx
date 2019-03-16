@@ -122,7 +122,7 @@ const AppearDemo = () => {
 
   return (
     <section>
-      <h2>Selectively disabling the animation</h2>
+      <h2>Animate in on first render</h2>
       <Animate opacity={visible ? 1 : 0} tension={10}>
         <button className="c3">I Fade In On Reload</button>
       </Animate>

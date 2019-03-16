@@ -2359,7 +2359,7 @@
         var _a = react.useState(false), visible = _a[0], setVisible = _a[1];
         react.useEffect(function () { return setVisible(true); }, []);
         return (react.createElement("section", null,
-            react.createElement("h2", null, "Selectively disabling the animation"),
+            react.createElement("h2", null, "Animate in on first render"),
             react.createElement(Animate, { opacity: visible ? 1 : 0, tension: 10 },
                 react.createElement("button", { className: "c3" }, "I Fade In On Reload"))));
     };
