@@ -33,8 +33,7 @@
     "motion"
   ],
   "dependencies": {
-    "rebound": "^0.1.0",
-    "stylistic": "^0.2.4"
+    "rebound": "^0.1.0"
   },
   "peerDependencies": {
     "react": "*",
