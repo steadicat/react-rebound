@@ -128,7 +128,7 @@ function toTransformStyle({
   return transforms.join(' ');
 }
 
-export function toStyle(props: Partial<AnimatableProps>): CSSProperties {
+export function toStyle(props: Partial<AnimatableProps>): Partial<CSSProperties> {
   const transformProps: Partial<TransformProperties> = {};
   const style: Partial<CSSProperties> = {};
 

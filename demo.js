@@ -2169,52 +2169,30 @@
     }
 
     var springSystem = new rebound.SpringSystem();
-    var Animate = react.forwardRef(function (_a, forwardedRef) {
-        var _b = _a.animate, animate = _b === void 0 ? true : _b, _c = _a.tension, tension = _c === void 0 ? 230 : _c, _d = _a.friction, friction = _d === void 0 ? 22 : _d, _e = _a.delay, delay = _e === void 0 ? 0 : _e, onStart = _a.onStart, onEnd = _a.onEnd, children = _a.children, props = __rest(_a, ["animate", "tension", "friction", "delay", "onStart", "onEnd", "children"]);
-        var ref = react.useRef();
-        var _f = react.useState(null), setState = _f[1];
+    function usePersisted(value) {
+        var ref = react.useRef(value);
+        ref.current = value;
+        return ref;
+    }
+    function useAnimation(ref, props, _a) {
+        var _b = _a.animate, animate = _b === void 0 ? true : _b, _c = _a.tension, tension = _c === void 0 ? 230 : _c, _d = _a.friction, friction = _d === void 0 ? 22 : _d, _e = _a.delay, delay = _e === void 0 ? 0 : _e, onStart = _a.onStart, onEnd = _a.onEnd;
         var springs = react.useRef({});
-        var animating = react.useRef(false);
-        var node = react.useRef(null);
-        react.useImperativeHandle(forwardedRef, function () { return ({
-            setVelocity: function (prop, value) {
-                var spring = springs.current[prop];
-                // eslint-disable-next-line @typescript-eslint/no-explicit-any
-                spring && spring.setVelocity(value);
-            },
-            setCurrentValue: function (prop, value) {
-                var spring = springs.current[prop];
-                // eslint-disable-next-line @typescript-eslint/no-explicit-any
-                spring && spring.setCurrentValue(value);
-            },
-            getCurrentValue: function (prop) {
-                var spring = springs.current[prop];
-                return spring && spring.getCurrentValue();
-            },
-        }); }, []);
-        var latestChildren = react.useRef(children);
-        latestChildren.current = children;
+        var animating = react.useRef(0);
+        var onStartRef = usePersisted(onStart);
         var onSpringActivate = react.useCallback(function () {
-            if (animating.current)
-                return;
-            animating.current = true;
-            if (typeof latestChildren.current === 'function') {
-                setState(null); // Trigger a re-render
-            }
-            onStart && onStart();
-        }, []);
+            animating.current += 1;
+            animating.current === 1 && onStartRef.current && onStartRef.current();
+        }, [onStartRef]);
+        var onEndRef = usePersisted(onEnd);
         var onSpringAtRest = react.useCallback(function () {
-            if (!animating.current)
-                return;
-            animating.current = false;
-            if (typeof latestChildren.current === 'function') {
-                setState(null); // Trigger a re-render
-            }
-            onEnd && onEnd();
-        }, []);
+            animating.current -= 1;
+            animating.current === 0 && onEndRef.current && onEndRef.current();
+        }, [onEndRef]);
         var request = react.useRef(null);
         var onSpringUpdate = react.useCallback(function () {
             function performUpdate() {
+                if (!ref.current)
+                    return;
                 request.current = null;
                 var current = {};
                 for (var p in springs.current) {
@@ -2224,22 +2202,15 @@
                 var style = toStyle(current);
                 for (var p in style) {
                     var prop = p;
-                    if (prop !== 'length' && prop !== 'parentRule') {
-                        node.current.style[prop] = style[prop];
-                    }
+                    ref.current.style[prop] =
+                        style[prop];
                 }
             }
             if (!request.current) {
                 request.current = raf_1(performUpdate);
             }
-        }, []);
+        }, [ref]);
         react.useEffect(function () {
-        }, []);
-        react.useEffect(function () {
-            if (!node.current) {
-                // eslint-disable-next-line react/no-find-dom-node
-                node.current = reactDom.findDOMNode(ref.current);
-            }
             function createSpring(startValue) {
                 var spring;
                 if (Array.isArray(startValue)) {
@@ -2278,6 +2249,55 @@
                 _loop_1(p);
             }
         });
+        // Cleanup
+        react.useEffect(function () {
+        }, []);
+        return springs.current;
+    }
+
+    var Animate = react.forwardRef(function (_a, forwardedRef) {
+        var _b = _a.animate, animate = _b === void 0 ? true : _b, _c = _a.tension, tension = _c === void 0 ? 230 : _c, _d = _a.friction, friction = _d === void 0 ? 22 : _d, _e = _a.delay, delay = _e === void 0 ? 0 : _e, onStart = _a.onStart, onEnd = _a.onEnd, children = _a.children, props = __rest(_a, ["animate", "tension", "friction", "delay", "onStart", "onEnd", "children"]);
+        var ref = react.useRef();
+        var animating = react.useRef(false);
+        var _f = react.useState(null), setState = _f[1];
+        var latestChildren = react.useRef(children);
+        latestChildren.current = children;
+        var springs = useAnimation(ref, props, {
+            animate: animate,
+            tension: tension,
+            friction: friction,
+            delay: delay,
+            onStart: function () {
+                animating.current = true;
+                if (typeof latestChildren.current === 'function') {
+                    setState(null); // Trigger a re-render
+                }
+                onStart && onStart();
+            },
+            onEnd: function () {
+                animating.current = false;
+                if (typeof latestChildren.current === 'function') {
+                    setState(null); // Trigger a re-render
+                }
+                onEnd && onEnd();
+            },
+        });
+        react.useImperativeHandle(forwardedRef, function () { return ({
+            setVelocity: function (prop, value) {
+                var spring = springs[prop];
+                // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                spring && spring.setVelocity(value);
+            },
+            setCurrentValue: function (prop, value) {
+                var spring = springs[prop];
+                // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                spring && spring.setCurrentValue(value);
+            },
+            getCurrentValue: function (prop) {
+                var spring = springs[prop];
+                return spring && spring.getCurrentValue();
+            },
+        }); }, [springs]);
         if (typeof children === 'function') {
             children = children(animating.current);
         }
@@ -2352,8 +2372,8 @@
         var toggled = _a.toggled, props = __rest(_a, ["toggled"]);
         return (react.createElement("section", null,
             react.createElement("h2", null, "Color"),
-            react.createElement(Animate, { background: toggled ? [200, 100, 0] : [100, 200, 100] },
-                react.createElement("button", __assign({ className: "c2" }, props), "Click Me"))));
+            react.createElement(Animate, { background: toggled ? [153, 199, 148] : [102, 153, 204] },
+                react.createElement("button", __assign({}, props), "Click Me"))));
     });
     var AppearDemo = function () {
         var _a = react.useState(false), visible = _a[0], setVisible = _a[1];
@@ -2361,7 +2381,7 @@
         return (react.createElement("section", null,
             react.createElement("h2", null, "Animate in on first render"),
             react.createElement(Animate, { opacity: visible ? 1 : 0, tension: 10 },
-                react.createElement("button", { className: "c3" }, "I Fade In On Reload"))));
+                react.createElement("button", { className: "c6" }, "I Fade In On Reload"))));
     };
     var AnimatePropDemo = function () {
         var _a = react.useState(true), visible = _a[0], setVisible = _a[1];
@@ -2373,7 +2393,7 @@
         return (react.createElement("section", null,
             react.createElement("h2", null, "Selectively disabling the animation"),
             react.createElement(Animate, { opacity: visible ? 1 : 0.5, animate: visible },
-                react.createElement("button", { className: "c4", onClick: onClick }, "Click Me"))));
+                react.createElement("button", { className: "c7", onClick: onClick }, "Click Me"))));
     };
     var DragDemo = function () {
         var animation = react.useRef();
@@ -2401,6 +2421,32 @@
             react.createElement(Animate, { ref: animation, translateX: 0, tension: 0 },
                 react.createElement("button", { className: "c1", style: { display: 'block', margin: '10px 0' }, onMouseDown: onDragStart }, "Drag Me"))));
     };
+    var HooksDemo = function () {
+        var ref = react.useRef();
+        var springs = useAnimation(ref, { translateX: 0 }, { tension: 0 });
+        var lastDrag = react.useRef(null);
+        var velocity = react.useRef(null);
+        var onDragStart = react.useCallback(function (event) {
+            lastDrag.current = event.clientX;
+        }, []);
+        var onMouseMove = react.useCallback(function (event) {
+            if (lastDrag.current === null)
+                return;
+            velocity.current = event.clientX - lastDrag.current;
+            springs.translateX.setCurrentValue(springs.translateX.getCurrentValue() + velocity.current);
+            lastDrag.current = event.clientX;
+        }, [springs]);
+        var onDragEnd = react.useCallback(function () {
+            if (lastDrag.current === null)
+                return;
+            lastDrag.current = null;
+            springs.translateX.setVelocity(velocity.current * 100);
+            velocity.current = 0;
+        }, [springs]);
+        return (react.createElement("section", { onMouseMove: onMouseMove, onMouseUp: onDragEnd, onMouseLeave: onDragEnd },
+            react.createElement("h2", null, "Hooks API"),
+            react.createElement("button", { ref: ref, className: "c2", style: { display: 'block', margin: '10px 0' }, onMouseDown: onDragStart }, "Drag Me")));
+    };
     var Demo = function () { return (react.createElement("div", null,
         react.createElement("h1", null, "react-rebound demos"),
         react.createElement("p", null,
@@ -2421,6 +2467,7 @@
         react.createElement(DragDemo, null),
         react.createElement(ColorDemo, null),
         react.createElement(AnimatePropDemo, null),
+        react.createElement(HooksDemo, null),
         react.createElement(CascadeWithDelayDemo, null),
         react.createElement(CascadeWithFrictionDemo, null),
         react.createElement(CascadeWithTensionDemo, null))); };

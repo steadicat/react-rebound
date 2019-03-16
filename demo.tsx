@@ -1,6 +1,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import {Animate, AnimateAPI} from './src/index';
+import {Animate, AnimateAPI, useAnimation} from './src/index';
 
 function toggle(Inner) {
   return props => {
@@ -107,10 +107,8 @@ const CascadeWithTensionDemo = toggle(({toggled, ...props}) => (
 const ColorDemo = toggle(({toggled, ...props}) => (
   <section>
     <h2>Color</h2>
-    <Animate background={toggled ? [200, 100, 0] : [100, 200, 100]}>
-      <button className="c2" {...props}>
-        Click Me
-      </button>
+    <Animate background={toggled ? [153, 199, 148] : [102, 153, 204]}>
+      <button {...props}>Click Me</button>
     </Animate>
   </section>
 ));
@@ -124,7 +122,7 @@ const AppearDemo = () => {
     <section>
       <h2>Animate in on first render</h2>
       <Animate opacity={visible ? 1 : 0} tension={10}>
-        <button className="c3">I Fade In On Reload</button>
+        <button className="c6">I Fade In On Reload</button>
       </Animate>
     </section>
   );
@@ -145,7 +143,7 @@ const AnimatePropDemo = () => {
     <section>
       <h2>Selectively disabling the animation</h2>
       <Animate opacity={visible ? 1 : 0.5} animate={visible}>
-        <button className="c4" onClick={onClick}>
+        <button className="c7" onClick={onClick}>
           Click Me
         </button>
       </Animate>
@@ -191,6 +189,45 @@ const DragDemo = () => {
   );
 };
 
+const HooksDemo = () => {
+  const ref = React.useRef();
+  const springs = useAnimation(ref, {translateX: 0}, {tension: 0});
+
+  const lastDrag = React.useRef(null);
+  const velocity = React.useRef(null);
+  const onDragStart = React.useCallback((event: React.MouseEvent) => {
+    lastDrag.current = event.clientX;
+  }, []);
+  const onMouseMove = React.useCallback(
+    (event: React.MouseEvent) => {
+      if (lastDrag.current === null) return;
+      velocity.current = event.clientX - lastDrag.current;
+      springs.translateX.setCurrentValue(springs.translateX.getCurrentValue() + velocity.current);
+      lastDrag.current = event.clientX;
+    },
+    [springs],
+  );
+  const onDragEnd = React.useCallback(() => {
+    if (lastDrag.current === null) return;
+    lastDrag.current = null;
+    springs.translateX.setVelocity(velocity.current * 100);
+    velocity.current = 0;
+  }, [springs]);
+
+  return (
+    <section onMouseMove={onMouseMove} onMouseUp={onDragEnd} onMouseLeave={onDragEnd}>
+      <h2>Hooks API</h2>
+      <button
+        ref={ref}
+        className="c2"
+        style={{display: 'block', margin: '10px 0'}}
+        onMouseDown={onDragStart}>
+        Drag Me
+      </button>
+    </section>
+  );
+};
+
 const Demo = () => (
   <div>
     <h1>react-rebound demos</h1>
@@ -211,6 +248,7 @@ const Demo = () => (
     <DragDemo />
     <ColorDemo />
     <AnimatePropDemo />
+    <HooksDemo />
     <CascadeWithDelayDemo />
     <CascadeWithFrictionDemo />
     <CascadeWithTensionDemo />
