@@ -1,16 +1,19 @@
 import raf from 'raf';
 import React from 'react';
 import ReactDOM from 'react-dom';
-import rebound, {SpringConfig} from 'rebound';
+import rebound, {SpringConfig, Spring} from 'rebound';
 import MultiSpring from './MultiSpring';
-import {AnimatableProps, getCurrentValue, toStyle} from './style';
+import {AnimatableProps, toStyle} from './style';
 
 const springSystem = new rebound.SpringSystem();
 
 export interface AnimateAPI {
-  setVelocity(prop: keyof AnimatableProps, value: number): void;
-  setCurrentValue(prop: keyof AnimatableProps, value: number): void;
-  getCurrentValue(prop: keyof AnimatableProps): number | number[];
+  setVelocity<Prop extends keyof AnimatableProps>(prop: Prop, value: AnimatableProps[Prop]): void;
+  setCurrentValue<Prop extends keyof AnimatableProps>(
+    prop: keyof AnimatableProps,
+    value: AnimatableProps[Prop],
+  ): void;
+  getCurrentValue<Prop extends keyof AnimatableProps>(prop: Prop): AnimatableProps[Prop];
 }
 
 export const Animate = React.forwardRef(
@@ -47,14 +50,22 @@ export const Animate = React.forwardRef(
     React.useImperativeHandle(
       forwardedRef,
       () => ({
-        setVelocity(prop: keyof AnimatableProps, value: number) {
-          springs.current[prop] && springs.current[prop]!.setVelocity(value);
+        setVelocity<Prop extends keyof AnimatableProps>(prop: Prop, value: AnimatableProps[Prop]) {
+          const spring = springs.current[prop];
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          spring && spring.setVelocity(value as any);
         },
-        setCurrentValue(prop: keyof AnimatableProps, value: number) {
-          springs.current[prop] && springs.current[prop]!.setCurrentValue(value);
+        setCurrentValue<Prop extends keyof AnimatableProps>(
+          prop: Prop,
+          value: AnimatableProps[Prop],
+        ) {
+          const spring = springs.current[prop];
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          spring && spring.setCurrentValue(value as any);
         },
-        getCurrentValue(prop: keyof AnimatableProps) {
-          return springs.current[prop] && springs.current[prop]!.getCurrentValue();
+        getCurrentValue<Prop extends keyof AnimatableProps>(prop: Prop) {
+          const spring = springs.current[prop];
+          return spring && spring.getCurrentValue();
         },
       }),
       [],
@@ -123,47 +134,38 @@ export const Animate = React.forwardRef(
         node.current = ReactDOM.findDOMNode(ref.current) as HTMLElement;
       }
 
-      function createSpring(startValue: number | number[]) {
+      function createSpring<Value extends AnimatableProps[keyof AnimatableProps]>(
+        startValue: Value,
+      ): Value extends number[] ? MultiSpring : Spring {
         let spring;
         if (Array.isArray(startValue)) {
           spring = new MultiSpring(springSystem, new SpringConfig(tension, friction));
           spring.setCurrentValue(startValue);
         } else {
           spring = springSystem.createSpringWithConfig(new SpringConfig(tension, friction));
-          spring.setCurrentValue(startValue);
+          spring.setCurrentValue(startValue as number);
         }
         spring.addListener({onSpringActivate, onSpringAtRest, onSpringUpdate});
-        return spring;
-      }
-
-      let computedStyle: CSSStyleDeclaration | undefined;
-      // If any prop is new, get the computed style to find the start value later
-      for (const p in props) {
-        const prop = p as keyof typeof props;
-        if (!springs.current[prop]) {
-          computedStyle = window.getComputedStyle(node.current!);
-          break;
-        }
+        return spring as Value extends number[] ? MultiSpring : Spring;
       }
 
       for (const p in props) {
         const prop = p as keyof typeof props;
         const value = props[prop];
         if (value === undefined) continue;
-        if (!springs.current[prop]) {
-          springs.current[prop] = createSpring(getCurrentValue(computedStyle!, prop));
-        }
+        const spring = springs.current[prop] || (springs.current[prop] = createSpring(value));
+
         if (animate) {
           if (delay) {
             // eslint-disable-next-line @typescript-eslint/no-explicit-any
-            setTimeout(() => springs.current[prop]!.setEndValue(value as any), delay);
+            setTimeout(() => spring.setEndValue(value as any), delay);
           } else {
             // eslint-disable-next-line @typescript-eslint/no-explicit-any
-            springs.current[prop]!.setEndValue(value as any);
+            spring.setEndValue(value as any);
           }
         } else {
           // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          springs.current[prop]!.setCurrentValue(value as any);
+          spring.setCurrentValue(value as any);
         }
       }
     });

@@ -25302,12 +25302,6 @@
     }());
     //# sourceMappingURL=MultiSpring.js.map
 
-    function int(style) {
-        return parseInt(style, 10);
-    }
-    function colorComponent(x) {
-        return "" + (x < 0 ? 0 : x > 255 ? 255 : Math.round(x));
-    }
     function cssFunction(name) {
         var params = [];
         for (var _i = 1; _i < arguments.length; _i++) {
@@ -25321,26 +25315,54 @@
             return name + "(" + params.map(function (p, i) { return p(values[i]); }) + ")";
         };
     }
-    var px = [function (n) { return (n || 0) + "px"; }, int];
-    var alpha = [function (x) { return "" + (x < 0 ? 0 : x > 1 ? 1 : x); }, int];
-    var ratio = [function (n) { return "" + n; }, int];
-    var deg = [function (n) { return n + "deg"; }, int];
-    var rgba = cssFunction('rgba', colorComponent, colorComponent, colorComponent, alpha[0]);
-    var color = [
-        function (_a) {
-            var r = _a[0], g = _a[1], b = _a[2], _b = _a[3], a = _b === void 0 ? 1 : _b;
-            return rgba(r, g, b, a);
-        },
-        function (style) {
-            var match = /rgba?\(([^)]+)\)/.exec(style);
-            if (!match)
-                return [0, 0, 0, 0];
-            var _a = match[1].split(',').map(function (x) { return parseInt(x, 10); }), r = _a[0], g = _a[1], b = _a[2], a = _a[3];
-            return [r, g, b, typeof a === 'undefined' ? 1 : a];
-        },
-    ];
-    //# sourceMappingURL=converters.js.map
-
+    function px(n) {
+        return (n || 0) + "px";
+    }
+    function alpha(x) {
+        return "" + (x < 0 ? 0 : x > 1 ? 1 : x);
+    }
+    function ratio(n) {
+        return "" + n;
+    }
+    function deg(n) {
+        return n + "deg";
+    }
+    function colorComponent(x) {
+        return "" + (x < 0 ? 0 : x > 255 ? 255 : Math.round(x));
+    }
+    var rgb = cssFunction('rgb', colorComponent, colorComponent, colorComponent);
+    var rgba = cssFunction('rgba', colorComponent, colorComponent, colorComponent, alpha);
+    var translate = cssFunction('translate', px, px);
+    var translate3d = cssFunction('translate3d', px, px, px);
+    var scale = cssFunction('scale', ratio, ratio);
+    var rotate = cssFunction('rotate', deg, deg);
+    var rotateZ = cssFunction('rotateZ', deg);
+    var skew = cssFunction('skew', deg, deg);
+    function color(_a) {
+        var r = _a[0], g = _a[1], b = _a[2], a = _a[3];
+        return typeof a === 'undefined' ? rgb(r, g, b) : rgba(r, g, b, a);
+    }
+    var numericalProperties = {
+        top: px,
+        left: px,
+        right: px,
+        bottom: px,
+        width: px,
+        height: px,
+        opacity: alpha,
+        color: color,
+        background: color,
+        backgroundColor: color,
+        borderBottomColor: color,
+        borderColor: color,
+        borderLeftColor: color,
+        borderRightColor: color,
+        borderTopColor: color,
+        outlineColor: color,
+        textDecorationColor: color,
+        letterSpacing: px,
+        lineHeight: px,
+    };
     var transformProperties = {
         translateX: 0,
         translateY: 0,
@@ -25350,14 +25372,11 @@
         rotateX: 0,
         rotateY: 0,
         rotateZ: 0,
+        skewX: 0,
+        skewY: 0,
     };
-    var translate = cssFunction('translate', px[0], px[0]);
-    var translate3d = cssFunction('translate3d', px[0], px[0], px[0]);
-    var scale = cssFunction('scale', ratio[0], ratio[0]);
-    var rotate = cssFunction('rotate', deg[0], deg[0]);
-    var rotateZ = cssFunction('rotateZ', deg[0]);
     function toTransformStyle(_a) {
-        var tx = _a.translateX, ty = _a.translateY, tz = _a.translateZ, sx = _a.scaleX, sy = _a.scaleY, rx = _a.rotateX, ry = _a.rotateY, rz = _a.rotateZ;
+        var tx = _a.translateX, ty = _a.translateY, tz = _a.translateZ, sx = _a.scaleX, sy = _a.scaleY, rx = _a.rotateX, ry = _a.rotateY, rz = _a.rotateZ, kx = _a.skewX, ky = _a.skewY;
         var transforms = [];
         if (tz !== undefined) {
             transforms.push(translate3d(tx || 0, ty || 0, tz || 0));
@@ -25374,36 +25393,13 @@
         if (rz !== undefined) {
             transforms.push(rotateZ(rz || 0));
         }
+        if (kx !== undefined || ky !== undefined) {
+            transforms.push(skew(kx || 0, ky || 0));
+        }
         if (transforms.length === 0)
             return 'none';
         return transforms.join(' ');
     }
-    function fromTransformStyle(style) {
-        return transformProperties;
-    }
-    //# sourceMappingURL=transform.js.map
-
-    var numericalProperties = {
-        top: px,
-        left: px,
-        right: px,
-        bottom: px,
-        width: px,
-        height: px,
-        opacity: alpha,
-        background: color,
-        backgroundColor: color,
-        borderBottomColor: color,
-        borderColor: color,
-        borderLeftColor: color,
-        borderRightColor: color,
-        borderTopColor: color,
-        color: color,
-        letterSpacing: px,
-        lineHeight: px,
-        outlineColor: color,
-        textDecorationColor: color,
-    };
     function toStyle(props) {
         var transformProps = {};
         var style = {};
@@ -25417,7 +25413,8 @@
             }
             else if (p in numericalProperties) {
                 var prop = p;
-                style[prop] = numericalProperties[prop][0](val);
+                // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                style[prop] = numericalProperties[prop](val);
             }
             else {
                 // eslint-disable-next-line no-console
@@ -25425,19 +25422,6 @@
             }
         }
         return __assign({}, style, { transform: toTransformStyle(transformProps) });
-    }
-    function getCurrentValue(style, p) {
-        if (p in transformProperties) {
-            var prop = p;
-            return fromTransformStyle(style.transform)[prop];
-        }
-        else if (p in numericalProperties) {
-            var prop = p;
-            return numericalProperties[prop][1](style[prop]);
-        }
-        // eslint-disable-next-line no-console
-        console.warn('Unsupported prop', p);
-        return 0;
     }
     //# sourceMappingURL=style.js.map
 
@@ -25451,13 +25435,18 @@
         var node = react.useRef(null);
         react.useImperativeHandle(forwardedRef, function () { return ({
             setVelocity: function (prop, value) {
-                springs.current[prop] && springs.current[prop].setVelocity(value);
+                var spring = springs.current[prop];
+                // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                spring && spring.setVelocity(value);
             },
             setCurrentValue: function (prop, value) {
-                springs.current[prop] && springs.current[prop].setCurrentValue(value);
+                var spring = springs.current[prop];
+                // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                spring && spring.setCurrentValue(value);
             },
             getCurrentValue: function (prop) {
-                return springs.current[prop] && springs.current[prop].getCurrentValue();
+                var spring = springs.current[prop];
+                return spring && spring.getCurrentValue();
             },
         }); }, []);
         var latestChildren = react.useRef(children);
@@ -25521,36 +25510,25 @@
                 spring.addListener({ onSpringActivate: onSpringActivate, onSpringAtRest: onSpringAtRest, onSpringUpdate: onSpringUpdate });
                 return spring;
             }
-            var computedStyle;
-            // If any prop is new, get the computed style to find the start value later
-            for (var p in props) {
-                var prop = p;
-                if (!springs.current[prop]) {
-                    computedStyle = window.getComputedStyle(node.current);
-                    break;
-                }
-            }
             var _loop_1 = function (p) {
                 var prop = p;
                 var value = props[prop];
                 if (value === undefined)
                     return "continue";
-                if (!springs.current[prop]) {
-                    springs.current[prop] = createSpring(getCurrentValue(computedStyle, prop));
-                }
+                var spring = springs.current[prop] || (springs.current[prop] = createSpring(value));
                 if (animate) {
                     if (delay) {
                         // eslint-disable-next-line @typescript-eslint/no-explicit-any
-                        setTimeout(function () { return springs.current[prop].setEndValue(value); }, delay);
+                        setTimeout(function () { return spring.setEndValue(value); }, delay);
                     }
                     else {
                         // eslint-disable-next-line @typescript-eslint/no-explicit-any
-                        springs.current[prop].setEndValue(value);
+                        spring.setEndValue(value);
                     }
                 }
                 else {
                     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-                    springs.current[prop].setCurrentValue(value);
+                    spring.setCurrentValue(value);
                 }
             };
             for (var p in props) {

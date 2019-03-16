@@ -71,6 +71,7 @@
     "react/no-set-state": "off",
     "react/no-multi-comp": "off",
     "react/button-has-type": "off",
+    "no-else-return": "off",
 
     // Too ambitious
     "react/display-name": "off",
