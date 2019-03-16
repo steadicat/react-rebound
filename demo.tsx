@@ -108,10 +108,50 @@ const ColorDemo = toggle(({toggled, ...props}) => (
   <section>
     <h2>Color</h2>
     <Animate background={toggled ? [200, 100, 0] : [100, 200, 100]}>
-      <button {...props}>Click Me</button>
+      <button className="c2" {...props}>
+        Click Me
+      </button>
     </Animate>
   </section>
 ));
+
+const AppearDemo = () => {
+  const [visible, setVisible] = React.useState(false);
+
+  React.useEffect(() => setVisible(true), []);
+
+  return (
+    <section>
+      <h2>Selectively disabling the animation</h2>
+      <Animate opacity={visible ? 1 : 0} tension={10}>
+        <button className="c3">I Fade In On Reload</button>
+      </Animate>
+    </section>
+  );
+};
+
+const AnimatePropDemo = () => {
+  const [visible, setVisible] = React.useState(true);
+
+  const instantHide = React.useCallback(() => setVisible(false), []);
+
+  const fadeIn = React.useCallback(() => setVisible(true), []);
+
+  const onClick = React.useCallback(() => {
+    visible ? instantHide() : fadeIn();
+  }, [visible, instantHide, fadeIn]);
+
+  return (
+    <section>
+      <h2>Selectively disabling the animation</h2>
+      <Animate opacity={visible ? 1 : 0.5} animate={visible}>
+        <button className="c4" onClick={onClick}>
+          Click Me
+        </button>
+      </Animate>
+    </section>
+  );
+};
 
 const DragDemo = () => {
   const animation = React.useRef<AnimateAPI>();
@@ -158,13 +198,19 @@ const Demo = () => (
       See <a href="https://github.com/steadicat/react-rebound">react-rebound on GitHub</a> for code
       and instructions.
     </p>
+    <p>
+      Source for these examples is{' '}
+      <a href="https://github.com/steadicat/react-rebound/blob/master/demo.tsx">here</a>.
+    </p>
     <ScaleDemo />
     <TranslateDemo />
     <FrictionDemo />
     <TensionDemo />
     <FrictionAndTensionDemo />
+    <AppearDemo />
     <DragDemo />
     <ColorDemo />
+    <AnimatePropDemo />
     <CascadeWithDelayDemo />
     <CascadeWithFrictionDemo />
     <CascadeWithTensionDemo />

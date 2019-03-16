@@ -68,21 +68,22 @@ export const numericalProperties = {
   borderTopColor: color,
   outlineColor: color,
   textDecorationColor: color,
-  letterSpacing: px,
+  fontSize: px,
   lineHeight: px,
+  letterSpacing: px,
 };
 
 export const transformProperties = {
-  translateX: 0,
-  translateY: 0,
-  translateZ: 0,
-  scaleX: 1,
-  scaleY: 1,
-  rotateX: 0,
-  rotateY: 0,
-  rotateZ: 0,
-  skewX: 0,
-  skewY: 0,
+  translateX: true,
+  translateY: true,
+  translateZ: true,
+  scaleX: true,
+  scaleY: true,
+  rotateX: true,
+  rotateY: true,
+  rotateZ: true,
+  skewX: true,
+  skewY: true,
 };
 
 type NumericalProperties = {

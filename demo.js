@@ -25360,20 +25360,21 @@
         borderTopColor: color,
         outlineColor: color,
         textDecorationColor: color,
-        letterSpacing: px,
+        fontSize: px,
         lineHeight: px,
+        letterSpacing: px,
     };
     var transformProperties = {
-        translateX: 0,
-        translateY: 0,
-        translateZ: 0,
-        scaleX: 1,
-        scaleY: 1,
-        rotateX: 0,
-        rotateY: 0,
-        rotateZ: 0,
-        skewX: 0,
-        skewY: 0,
+        translateX: true,
+        translateY: true,
+        translateZ: true,
+        scaleX: true,
+        scaleY: true,
+        rotateX: true,
+        rotateY: true,
+        rotateZ: true,
+        skewX: true,
+        skewY: true,
     };
     function toTransformStyle(_a) {
         var tx = _a.translateX, ty = _a.translateY, tz = _a.translateZ, sx = _a.scaleX, sy = _a.scaleY, rx = _a.rotateX, ry = _a.rotateY, rz = _a.rotateZ, kx = _a.skewX, ky = _a.skewY;
@@ -25611,8 +25612,28 @@
         return (react.createElement("section", null,
             react.createElement("h2", null, "Color"),
             react.createElement(Animate, { background: toggled ? [200, 100, 0] : [100, 200, 100] },
-                react.createElement("button", __assign({}, props), "Click Me"))));
+                react.createElement("button", __assign({ className: "c2" }, props), "Click Me"))));
     });
+    var AppearDemo = function () {
+        var _a = react.useState(false), visible = _a[0], setVisible = _a[1];
+        react.useEffect(function () { return setVisible(true); }, []);
+        return (react.createElement("section", null,
+            react.createElement("h2", null, "Selectively disabling the animation"),
+            react.createElement(Animate, { opacity: visible ? 1 : 0, tension: 10 },
+                react.createElement("button", { className: "c3" }, "I Fade In On Reload"))));
+    };
+    var AnimatePropDemo = function () {
+        var _a = react.useState(true), visible = _a[0], setVisible = _a[1];
+        var instantHide = react.useCallback(function () { return setVisible(false); }, []);
+        var fadeIn = react.useCallback(function () { return setVisible(true); }, []);
+        var onClick = react.useCallback(function () {
+            visible ? instantHide() : fadeIn();
+        }, [visible, instantHide, fadeIn]);
+        return (react.createElement("section", null,
+            react.createElement("h2", null, "Selectively disabling the animation"),
+            react.createElement(Animate, { opacity: visible ? 1 : 0.5, animate: visible },
+                react.createElement("button", { className: "c4", onClick: onClick }, "Click Me"))));
+    };
     var DragDemo = function () {
         var animation = react.useRef();
         var lastDrag = react.useRef(null);
@@ -25645,13 +25666,20 @@
             "See ",
             react.createElement("a", { href: "https://github.com/steadicat/react-rebound" }, "react-rebound on GitHub"),
             " for code and instructions."),
+        react.createElement("p", null,
+            "Source for these examples is",
+            ' ',
+            react.createElement("a", { href: "https://github.com/steadicat/react-rebound/blob/master/demo.tsx" }, "here"),
+            "."),
         react.createElement(ScaleDemo, null),
         react.createElement(TranslateDemo, null),
         react.createElement(FrictionDemo, null),
         react.createElement(TensionDemo, null),
         react.createElement(FrictionAndTensionDemo, null),
+        react.createElement(AppearDemo, null),
         react.createElement(DragDemo, null),
         react.createElement(ColorDemo, null),
+        react.createElement(AnimatePropDemo, null),
         react.createElement(CascadeWithDelayDemo, null),
         react.createElement(CascadeWithFrictionDemo, null),
         react.createElement(CascadeWithTensionDemo, null))); };
