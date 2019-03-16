@@ -35,7 +35,7 @@ const TranslateDemo = toggle(({toggled, ...props}) => (
 const FrictionDemo = toggle(({toggled, ...props}) => (
   <section>
     <h2>Translate with high friction</h2>
-    <Animate translateX={toggled ? 200 : 0} friction={200}>
+    <Animate translateX={toggled ? 200 : 0} friction={80}>
       <button className="c3" {...props}>
         Click Me
       </button>
@@ -46,7 +46,7 @@ const FrictionDemo = toggle(({toggled, ...props}) => (
 const TensionDemo = toggle(({toggled, ...props}) => (
   <section>
     <h2>Translate with high tension</h2>
-    <Animate translateX={toggled ? 200 : 0} tension={1000}>
+    <Animate translateX={toggled ? 200 : 0} tension={500}>
       <button className="c4" {...props}>
         Click Me
       </button>
@@ -57,7 +57,7 @@ const TensionDemo = toggle(({toggled, ...props}) => (
 const FrictionAndTensionDemo = toggle(({toggled, ...props}) => (
   <section>
     <h2>Translate with high friction and tension</h2>
-    <Animate translateX={toggled ? 200 : 0} friction={400} tension={2000}>
+    <Animate translateX={toggled ? 200 : 0} friction={80} tension={500}>
       <button className="c5" {...props}>
         Click Me
       </button>
@@ -82,7 +82,7 @@ const CascadeWithFrictionDemo = toggle(({toggled, ...props}) => (
   <section {...props}>
     <h2>Cascade with friction</h2>
     {[1, 2, 3, 4, 5, 6, 7].map(index => (
-      <Animate key={index} translateX={toggled ? 200 : 0} friction={5 + index * 1}>
+      <Animate key={index} translateX={toggled ? 200 : 0} friction={10 + index * 4}>
         <button className={`c${index}`} style={{display: 'block', margin: '10px 0'}}>
           Click Me
         </button>
@@ -95,7 +95,7 @@ const CascadeWithTensionDemo = toggle(({toggled, ...props}) => (
   <section {...props}>
     <h2>Cascade with tension</h2>
     {[1, 2, 3, 4, 5, 6, 7].map(index => (
-      <Animate key={index} translateX={toggled ? 200 : 0} tension={(10 - index) * 20}>
+      <Animate key={index} translateX={toggled ? 200 : 0} tension={100 + (10 - index) * 20}>
         <button className={`c${index}`} style={{display: 'block', margin: '10px 0'}}>
           Click Me
         </button>

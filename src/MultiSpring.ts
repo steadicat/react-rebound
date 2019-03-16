@@ -1,15 +1,12 @@
-import {SpringSystem, Spring, Listener} from 'rebound';
-import {number} from 'prop-types';
+import {Listener, Spring, SpringSystem, SpringConfig} from 'rebound';
 
 export default class MultiSpring {
   private system: SpringSystem;
-  private tension: number;
-  private friction: number;
+  private config: SpringConfig;
   private springs: Spring[] = [];
-  public constructor(system: SpringSystem, tension: number, friction: number) {
+  public constructor(system: SpringSystem, config: SpringConfig) {
     this.system = system;
-    this.tension = tension;
-    this.friction = friction;
+    this.config = config;
   }
 
   public destroy() {
@@ -33,7 +30,7 @@ export default class MultiSpring {
 
   public setEndValue(value: number[]) {
     for (let i = 0; i < value.length; i++) {
-      if (!this.springs[i]) this.springs[i] = this.system.createSpring(this.tension, this.friction);
+      if (!this.springs[i]) this.springs[i] = this.system.createSpringWithConfig(this.config);
       this.springs[i].setEndValue(value[i]);
     }
   }

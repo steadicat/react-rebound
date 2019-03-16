@@ -1,7 +1,7 @@
 import raf from 'raf';
 import React from 'react';
 import ReactDOM from 'react-dom';
-import rebound from 'rebound';
+import rebound, {SpringConfig} from 'rebound';
 import MultiSpring from './MultiSpring';
 import {AnimatableProps, getCurrentValue, toStyle} from './style';
 
@@ -13,16 +13,12 @@ export interface AnimateAPI {
   getCurrentValue(prop: keyof AnimatableProps): number | number[];
 }
 
-function convertTension(n: number) {
-  return (n - 194.0) / 3.62 + 30.0;
-}
-
 export const Animate = React.forwardRef(
   (
     {
       animate = true,
-      tension = 400,
-      friction = 7,
+      tension = 230,
+      friction = 22,
       delay = 0,
       onStart,
       onEnd,
@@ -130,10 +126,10 @@ export const Animate = React.forwardRef(
       function createSpring(startValue: number | number[]) {
         let spring;
         if (Array.isArray(startValue)) {
-          spring = new MultiSpring(springSystem, convertTension(tension), friction);
+          spring = new MultiSpring(springSystem, new SpringConfig(tension, friction));
           spring.setCurrentValue(startValue);
         } else {
-          spring = springSystem.createSpring(convertTension(tension), friction);
+          spring = springSystem.createSpringWithConfig(new SpringConfig(tension, friction));
           spring.setCurrentValue(startValue);
         }
         spring.addListener({onSpringActivate, onSpringAtRest, onSpringUpdate});
