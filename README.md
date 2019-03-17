@@ -217,13 +217,13 @@ This is the full list of properties you can animate:
 - **translateX**: number in px
 - **translateY**: number in px
 - **translateZ**: number in px
-- **scaleX**: number in px
-- **scaleY**: number in px
-- **rotateX**: number in px
-- **rotateY**: number in px
-- **rotateZ**: number in px
-- **skewX**: number in px
-- **skewY**: number in px
+- **scaleX**: number representing the scale ratio (1 is the default)
+- **scaleY**: number representing the scale ratio (1 is the default)
+- **rotateX**: number in deg
+- **rotateY**: number in deg
+- **rotateZ**: number in deg
+- **skewX**: number in deg
+- **skewY**: number in deg
 
 ### Position and opacity
 
@@ -252,7 +252,7 @@ This is the full list of properties you can animate:
 
 ### Text
 
-**Warning**: animating text properties can cause performance issues and jittery animations. Consider using scale transforms instead.
+**Warning**: animating text properties can create slow and jittery animations. Consider using scale and translate transforms instead.
 
 - **fontSize**: number in px
 - **lineHeight**: number in px
