@@ -2174,8 +2174,20 @@
         ref.current = value;
         return ref;
     }
+    function createSpring(startValue, tension, friction) {
+        var spring;
+        if (Array.isArray(startValue)) {
+            spring = new MultiSpring(springSystem, new rebound_1(tension, friction));
+            spring.setCurrentValue(startValue);
+        }
+        else {
+            spring = springSystem.createSpringWithConfig(new rebound_1(tension, friction));
+            spring.setCurrentValue(startValue);
+        }
+        return spring;
+    }
     function useAnimation(ref, props, _a) {
-        var _b = _a.animate, animate = _b === void 0 ? true : _b, _c = _a.tension, tension = _c === void 0 ? 230 : _c, _d = _a.friction, friction = _d === void 0 ? 22 : _d, _e = _a.delay, delay = _e === void 0 ? 0 : _e, onStart = _a.onStart, onEnd = _a.onEnd;
+        var _b = _a === void 0 ? {} : _a, _c = _b.animate, animate = _c === void 0 ? true : _c, _d = _b.tension, tension = _d === void 0 ? 230 : _d, _e = _b.friction, friction = _e === void 0 ? 22 : _e, _f = _b.delay, delay = _f === void 0 ? 0 : _f, onStart = _b.onStart, onEnd = _b.onEnd;
         var springs = react.useRef({});
         var animating = react.useRef(0);
         var onStartRef = usePersisted(onStart);
@@ -2194,12 +2206,12 @@
                 if (!ref.current)
                     return;
                 request.current = null;
-                var current = {};
+                var currentValues = {};
                 for (var p in springs.current) {
                     var prop = p;
-                    current[prop] = springs.current[prop].getCurrentValue();
+                    currentValues[prop] = springs.current[prop].getCurrentValue();
                 }
-                var style = toStyle(current);
+                var style = toStyle(currentValues);
                 for (var p in style) {
                     var prop = p;
                     ref.current.style[prop] =
@@ -2211,42 +2223,31 @@
             }
         }, [ref]);
         react.useEffect(function () {
-            function createSpring(startValue) {
-                var spring;
-                if (Array.isArray(startValue)) {
-                    spring = new MultiSpring(springSystem, new rebound_1(tension, friction));
-                    spring.setCurrentValue(startValue);
-                }
-                else {
-                    spring = springSystem.createSpringWithConfig(new rebound_1(tension, friction));
-                    spring.setCurrentValue(startValue);
-                }
-                spring.addListener({ onSpringActivate: onSpringActivate, onSpringAtRest: onSpringAtRest, onSpringUpdate: onSpringUpdate });
-                return spring;
-            }
             var _loop_1 = function (p) {
                 var prop = p;
                 var value = props[prop];
                 if (value === undefined)
                     return "continue";
-                var spring = springs.current[prop] || (springs.current[prop] = createSpring(value));
-                if (animate) {
-                    if (delay) {
-                        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-                        setTimeout(function () { return spring.setEndValue(value); }, delay);
-                    }
-                    else {
-                        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-                        spring.setEndValue(value);
-                    }
+                var spring = springs.current[prop];
+                if (!spring) {
+                    spring = springs.current[prop] = createSpring(value, tension, friction);
+                    spring.addListener({ onSpringActivate: onSpringActivate, onSpringAtRest: onSpringAtRest, onSpringUpdate: onSpringUpdate });
+                }
+                if (!animate) {
+                    spring.setCurrentValue(value);
+                    return { value: void 0 };
+                }
+                if (delay) {
+                    setTimeout(function () { return spring.setEndValue(value); }, delay);
                 }
                 else {
-                    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-                    spring.setCurrentValue(value);
+                    spring.setEndValue(value);
                 }
             };
             for (var p in props) {
-                _loop_1(p);
+                var state_1 = _loop_1(p);
+                if (typeof state_1 === "object")
+                    return state_1.value;
             }
         });
         // Cleanup

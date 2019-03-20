@@ -12,9 +12,25 @@ function usePersisted<Value>(value: Value) {
   return ref;
 }
 
-export function useAnimation(
+function createSpring<Props extends Partial<AnimatableProps>>(
+  startValue: Props[keyof Props],
+  tension: number,
+  friction: number,
+): Props[keyof Props] extends number[] ? MultiSpring : Spring {
+  let spring;
+  if (Array.isArray(startValue)) {
+    spring = new MultiSpring(springSystem, new SpringConfig(tension, friction));
+    spring.setCurrentValue(startValue);
+  } else {
+    spring = springSystem.createSpringWithConfig(new SpringConfig(tension, friction));
+    spring.setCurrentValue((startValue as unknown) as number);
+  }
+  return spring as Props[keyof Props] extends number[] ? MultiSpring : Spring;
+}
+
+export function useAnimation<Props extends Partial<AnimatableProps>>(
   ref: MutableRefObject<HTMLElement | undefined>,
-  props: Partial<AnimatableProps>,
+  props: Props,
   {
     animate = true,
     tension = 230,
@@ -29,11 +45,11 @@ export function useAnimation(
     delay?: number;
     onStart?: () => void;
     onEnd?: () => void;
-  },
+  } = {},
 ) {
-  const springs = React.useRef<{[prop in keyof AnimatableProps]?: rebound.Spring | MultiSpring}>(
-    {},
-  );
+  const springs = React.useRef<
+    {[prop in keyof Props]: Props[prop] extends number ? rebound.Spring : MultiSpring}
+  >({} as {[prop in keyof Props]: Props[prop] extends number ? rebound.Spring : MultiSpring});
   const animating = React.useRef(0);
 
   const onStartRef = usePersisted(onStart);
@@ -54,16 +70,14 @@ export function useAnimation(
       if (!ref.current) return;
 
       request.current = null;
-      const current: Partial<AnimatableProps> = {};
+      const currentValues: {[key in keyof Props]?: Props[key]} = {};
 
       for (const p in springs.current) {
-        const prop = p as keyof typeof springs.current;
-        current[prop] = springs.current[
-          prop
-        ]!.getCurrentValue() as AnimatableProps[keyof AnimatableProps];
+        const prop = p as keyof typeof currentValues;
+        currentValues[prop] = springs.current[prop]!.getCurrentValue();
       }
 
-      const style = toStyle(current);
+      const style = toStyle(currentValues);
       for (const p in style) {
         const prop = p as keyof CSSProperties;
         ref.current.style[prop as Exclude<keyof CSSStyleDeclaration, 'length' | 'parentRule'>] =
@@ -77,38 +91,23 @@ export function useAnimation(
   }, [ref]);
 
   React.useEffect(() => {
-    function createSpring<Value extends AnimatableProps[keyof AnimatableProps]>(
-      startValue: Value,
-    ): Value extends number[] ? MultiSpring : Spring {
-      let spring;
-      if (Array.isArray(startValue)) {
-        spring = new MultiSpring(springSystem, new SpringConfig(tension, friction));
-        spring.setCurrentValue(startValue);
-      } else {
-        spring = springSystem.createSpringWithConfig(new SpringConfig(tension, friction));
-        spring.setCurrentValue(startValue as number);
-      }
-      spring.addListener({onSpringActivate, onSpringAtRest, onSpringUpdate});
-      return spring as Value extends number[] ? MultiSpring : Spring;
-    }
-
     for (const p in props) {
       const prop = p as keyof typeof props;
       const value = props[prop];
       if (value === undefined) continue;
-      const spring = springs.current[prop] || (springs.current[prop] = createSpring(value));
-
-      if (animate) {
-        if (delay) {
-          // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          setTimeout(() => spring.setEndValue(value as any), delay);
-        } else {
-          // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          spring.setEndValue(value as any);
-        }
+      let spring = springs.current[prop];
+      if (!spring) {
+        spring = springs.current[prop] = createSpring<Props>(value, tension, friction);
+        spring.addListener({onSpringActivate, onSpringAtRest, onSpringUpdate});
+      }
+      if (!animate) {
+        spring.setCurrentValue(value);
+        return;
+      }
+      if (delay) {
+        setTimeout(() => spring.setEndValue(value), delay);
       } else {
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        spring.setCurrentValue(value as any);
+        spring.setEndValue(value);
       }
     }
   });
