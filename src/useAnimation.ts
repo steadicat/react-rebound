@@ -29,7 +29,7 @@ function createSpring<Props extends Partial<AnimatableProps>>(
 }
 
 export function useAnimation<Props extends Partial<AnimatableProps>>(
-  ref: MutableRefObject<HTMLElement | undefined>,
+  ref: MutableRefObject<HTMLElement | undefined | null>,
   props: Props,
   {
     animate = true,
