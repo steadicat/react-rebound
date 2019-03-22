@@ -65,6 +65,53 @@ const FrictionAndTensionDemo = toggle(({toggled, ...props}) => (
   </section>
 ));
 
+const ClampingDemo = toggle(({toggled, ...props}) => (
+  <section>
+    <h2>Clamping and thresholds</h2>
+    <Animate translateX={toggled ? 200 : 0} tension={500}>
+      <button className="c6" style={{display: 'block', margin: '10px 0'}} {...props}>
+        Unclamped
+      </button>
+    </Animate>
+    <Animate translateX={toggled ? 200 : 0} tension={500} clamp>
+      <button className="c7" style={{display: 'block', margin: '10px 0'}} {...props}>
+        Clamped
+      </button>
+    </Animate>
+  </section>
+));
+
+const ThresholdsDemo = toggle(({toggled, ...props}) => (
+  <section>
+    <h2>Speed and displacement rest thresholds</h2>
+    <Animate translateX={toggled ? 200 : 0} friction={5} tension={10}>
+      <button className="c8" style={{display: 'block', margin: '10px 0'}} {...props}>
+        0.001/0.001
+      </button>
+    </Animate>
+    <Animate translateX={toggled ? 200 : 0} friction={5} tension={10} speedThreshold={100}>
+      <button className="c1" style={{display: 'block', margin: '10px 0'}} {...props}>
+        100/0.001
+      </button>
+    </Animate>
+    <Animate translateX={toggled ? 200 : 0} friction={5} tension={10} displacementThreshold={10}>
+      <button className="c2" style={{display: 'block', margin: '10px 0'}} {...props}>
+        0.001/10
+      </button>
+    </Animate>
+    <Animate
+      translateX={toggled ? 200 : 0}
+      friction={5}
+      tension={10}
+      speedThreshold={100}
+      displacementThreshold={10}>
+      <button className="c3" style={{display: 'block', margin: '10px 0'}} {...props}>
+        100/10
+      </button>
+    </Animate>
+  </section>
+));
+
 const CascadeWithDelayDemo = toggle(({toggled, ...props}) => (
   <section {...props}>
     <h2>Cascade with delay</h2>
@@ -190,7 +237,7 @@ const DragDemo = () => {
 };
 
 const HooksDemo = () => {
-  const ref = React.useRef();
+  const ref = React.useRef<HTMLButtonElement>(null);
   const springs = useAnimation(ref, {translateX: 0}, {tension: 0});
 
   const lastDrag = React.useRef(null);
@@ -244,6 +291,8 @@ const Demo = () => (
     <FrictionDemo />
     <TensionDemo />
     <FrictionAndTensionDemo />
+    <ClampingDemo />
+    <ThresholdsDemo />
     <AppearDemo />
     <DragDemo />
     <ColorDemo />

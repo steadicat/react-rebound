@@ -46,6 +46,17 @@ export default class MultiSpring {
   public setVelocity(value: number) {
     for (const spring of this.springs) spring.setVelocity(value);
   }
+  public setRestSpeedThreshold(value: number) {
+    for (const spring of this.springs) spring.setRestSpeedThreshold(value);
+  }
+
+  public setRestDisplacementThreshold(value: number) {
+    for (const spring of this.springs) spring.setRestDisplacementThreshold(value);
+  }
+
+  public setOvershootClampingEnabled(value: boolean) {
+    for (const spring of this.springs) spring.setOvershootClampingEnabled(value);
+  }
 
   public addListener(value: Listener) {
     for (const spring of this.springs) spring.addListener(value);

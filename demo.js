@@ -2024,6 +2024,24 @@
                 spring.setVelocity(value);
             }
         };
+        MultiSpring.prototype.setRestSpeedThreshold = function (value) {
+            for (var _i = 0, _a = this.springs; _i < _a.length; _i++) {
+                var spring = _a[_i];
+                spring.setRestSpeedThreshold(value);
+            }
+        };
+        MultiSpring.prototype.setRestDisplacementThreshold = function (value) {
+            for (var _i = 0, _a = this.springs; _i < _a.length; _i++) {
+                var spring = _a[_i];
+                spring.setRestDisplacementThreshold(value);
+            }
+        };
+        MultiSpring.prototype.setOvershootClampingEnabled = function (value) {
+            for (var _i = 0, _a = this.springs; _i < _a.length; _i++) {
+                var spring = _a[_i];
+                spring.setOvershootClampingEnabled(value);
+            }
+        };
         MultiSpring.prototype.addListener = function (value) {
             for (var _i = 0, _a = this.springs; _i < _a.length; _i++) {
                 var spring = _a[_i];
@@ -2187,7 +2205,7 @@
         return spring;
     }
     function useAnimation(ref, props, _a) {
-        var _b = _a === void 0 ? {} : _a, _c = _b.animate, animate = _c === void 0 ? true : _c, _d = _b.tension, tension = _d === void 0 ? 230 : _d, _e = _b.friction, friction = _e === void 0 ? 22 : _e, _f = _b.delay, delay = _f === void 0 ? 0 : _f, onStart = _b.onStart, onEnd = _b.onEnd;
+        var _b = _a === void 0 ? {} : _a, _c = _b.animate, animate = _c === void 0 ? true : _c, _d = _b.tension, tension = _d === void 0 ? 230 : _d, _e = _b.friction, friction = _e === void 0 ? 22 : _e, _f = _b.delay, delay = _f === void 0 ? 0 : _f, _g = _b.displacementThreshold, displacementThreshold = _g === void 0 ? 0.001 : _g, _h = _b.speedThreshold, speedThreshold = _h === void 0 ? 0.001 : _h, _j = _b.clamp, clamp = _j === void 0 ? false : _j, onStart = _b.onStart, onEnd = _b.onEnd;
         var springs = react.useRef({});
         var animating = react.useRef(0);
         var onStartRef = usePersisted(onStart);
@@ -2231,6 +2249,9 @@
                 var spring = springs.current[prop];
                 if (!spring) {
                     spring = springs.current[prop] = createSpring(value, tension, friction);
+                    spring.setRestSpeedThreshold(speedThreshold);
+                    spring.setRestDisplacementThreshold(displacementThreshold);
+                    spring.setOvershootClampingEnabled(clamp);
                     spring.addListener({ onSpringActivate: onSpringActivate, onSpringAtRest: onSpringAtRest, onSpringUpdate: onSpringUpdate });
                 }
                 if (!animate) {
@@ -2257,10 +2278,10 @@
     }
 
     var Animate = react.forwardRef(function (_a, forwardedRef) {
-        var _b = _a.animate, animate = _b === void 0 ? true : _b, _c = _a.tension, tension = _c === void 0 ? 230 : _c, _d = _a.friction, friction = _d === void 0 ? 22 : _d, _e = _a.delay, delay = _e === void 0 ? 0 : _e, onStart = _a.onStart, onEnd = _a.onEnd, children = _a.children, props = __rest(_a, ["animate", "tension", "friction", "delay", "onStart", "onEnd", "children"]);
+        var _b = _a.animate, animate = _b === void 0 ? true : _b, _c = _a.tension, tension = _c === void 0 ? 230 : _c, _d = _a.friction, friction = _d === void 0 ? 22 : _d, _e = _a.delay, delay = _e === void 0 ? 0 : _e, _f = _a.displacementThreshold, displacementThreshold = _f === void 0 ? 0.001 : _f, _g = _a.speedThreshold, speedThreshold = _g === void 0 ? 0.001 : _g, _h = _a.clamp, clamp = _h === void 0 ? false : _h, onStart = _a.onStart, onEnd = _a.onEnd, children = _a.children, props = __rest(_a, ["animate", "tension", "friction", "delay", "displacementThreshold", "speedThreshold", "clamp", "onStart", "onEnd", "children"]);
         var ref = react.useRef();
         var animating = react.useRef(false);
-        var _f = react.useState(null), setState = _f[1];
+        var _j = react.useState(null), setState = _j[1];
         var latestChildren = react.useRef(children);
         latestChildren.current = children;
         var springs = useAnimation(ref, props, {
@@ -2268,6 +2289,9 @@
             tension: tension,
             friction: friction,
             delay: delay,
+            displacementThreshold: displacementThreshold,
+            speedThreshold: speedThreshold,
+            clamp: clamp,
             onStart: function () {
                 animating.current = true;
                 if (typeof latestChildren.current === 'function') {
@@ -2348,6 +2372,28 @@
             react.createElement(Animate, { translateX: toggled ? 200 : 0, friction: 80, tension: 500 },
                 react.createElement("button", __assign({ className: "c5" }, props), "Click Me"))));
     });
+    var ClampingDemo = toggle(function (_a) {
+        var toggled = _a.toggled, props = __rest(_a, ["toggled"]);
+        return (react.createElement("section", null,
+            react.createElement("h2", null, "Clamping and thresholds"),
+            react.createElement(Animate, { translateX: toggled ? 200 : 0, tension: 500 },
+                react.createElement("button", __assign({ className: "c6", style: { display: 'block', margin: '10px 0' } }, props), "Unclamped")),
+            react.createElement(Animate, { translateX: toggled ? 200 : 0, tension: 500, clamp: true },
+                react.createElement("button", __assign({ className: "c7", style: { display: 'block', margin: '10px 0' } }, props), "Clamped"))));
+    });
+    var ThresholdsDemo = toggle(function (_a) {
+        var toggled = _a.toggled, props = __rest(_a, ["toggled"]);
+        return (react.createElement("section", null,
+            react.createElement("h2", null, "Speed and displacement rest thresholds"),
+            react.createElement(Animate, { translateX: toggled ? 200 : 0, friction: 5, tension: 10 },
+                react.createElement("button", __assign({ className: "c8", style: { display: 'block', margin: '10px 0' } }, props), "0.001/0.001")),
+            react.createElement(Animate, { translateX: toggled ? 200 : 0, friction: 5, tension: 10, speedThreshold: 100 },
+                react.createElement("button", __assign({ className: "c1", style: { display: 'block', margin: '10px 0' } }, props), "100/0.001")),
+            react.createElement(Animate, { translateX: toggled ? 200 : 0, friction: 5, tension: 10, displacementThreshold: 10 },
+                react.createElement("button", __assign({ className: "c2", style: { display: 'block', margin: '10px 0' } }, props), "0.001/10")),
+            react.createElement(Animate, { translateX: toggled ? 200 : 0, friction: 5, tension: 10, speedThreshold: 100, displacementThreshold: 10 },
+                react.createElement("button", __assign({ className: "c3", style: { display: 'block', margin: '10px 0' } }, props), "100/10"))));
+    });
     var CascadeWithDelayDemo = toggle(function (_a) {
         var toggled = _a.toggled, props = __rest(_a, ["toggled"]);
         return (react.createElement("section", __assign({}, props),
@@ -2423,7 +2469,7 @@
                 react.createElement("button", { className: "c1", style: { display: 'block', margin: '10px 0' }, onMouseDown: onDragStart }, "Drag Me"))));
     };
     var HooksDemo = function () {
-        var ref = react.useRef();
+        var ref = react.useRef(null);
         var springs = useAnimation(ref, { translateX: 0 }, { tension: 0 });
         var lastDrag = react.useRef(null);
         var velocity = react.useRef(null);
@@ -2464,6 +2510,8 @@
         react.createElement(FrictionDemo, null),
         react.createElement(TensionDemo, null),
         react.createElement(FrictionAndTensionDemo, null),
+        react.createElement(ClampingDemo, null),
+        react.createElement(ThresholdsDemo, null),
         react.createElement(AppearDemo, null),
         react.createElement(DragDemo, null),
         react.createElement(ColorDemo, null),

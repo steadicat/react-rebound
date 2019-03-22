@@ -36,6 +36,9 @@ export function useAnimation<Props extends Partial<AnimatableProps>>(
     tension = 230,
     friction = 22,
     delay = 0,
+    displacementThreshold = 0.001,
+    speedThreshold = 0.001,
+    clamp = false,
     onStart,
     onEnd,
   }: {
@@ -43,6 +46,9 @@ export function useAnimation<Props extends Partial<AnimatableProps>>(
     tension?: number;
     friction?: number;
     delay?: number;
+    displacementThreshold?: number;
+    speedThreshold?: number;
+    clamp?: boolean;
     onStart?: () => void;
     onEnd?: () => void;
   } = {},
@@ -98,6 +104,9 @@ export function useAnimation<Props extends Partial<AnimatableProps>>(
       let spring = springs.current[prop];
       if (!spring) {
         spring = springs.current[prop] = createSpring<Props>(value, tension, friction);
+        spring.setRestSpeedThreshold(speedThreshold);
+        spring.setRestDisplacementThreshold(displacementThreshold);
+        spring.setOvershootClampingEnabled(clamp);
         spring.addListener({onSpringActivate, onSpringAtRest, onSpringUpdate});
       }
       if (!animate) {

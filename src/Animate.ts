@@ -18,6 +18,9 @@ export const Animate = React.forwardRef(
       tension = 230,
       friction = 22,
       delay = 0,
+      displacementThreshold = 0.001,
+      speedThreshold = 0.001,
+      clamp = false,
       onStart,
       onEnd,
       children,
@@ -27,6 +30,9 @@ export const Animate = React.forwardRef(
       tension?: number;
       friction?: number;
       delay?: number;
+      displacementThreshold?: number;
+      speedThreshold?: number;
+      clamp?: boolean;
       onStart?: () => void;
       onEnd?: () => void;
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -45,6 +51,9 @@ export const Animate = React.forwardRef(
       tension,
       friction,
       delay,
+      displacementThreshold,
+      speedThreshold,
+      clamp,
       onStart() {
         animating.current = true;
         if (typeof latestChildren.current === 'function') {
