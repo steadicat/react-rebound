@@ -1,6 +1,6 @@
 {
   "name": "react-rebound",
-  "version": "0.8.2",
+  "version": "0.8.3",
   "description": "High-performance spring animations in React.",
   "author": "Stefano J. Attardi (http://github.com/steadicat)",
   "main": "dist/index.js",
