@@ -1,2 +1,2 @@
 export {useAnimation} from './useAnimation';
-export {Animate} from './Animate';
+export {Animate, AnimateAPI} from './Animate';

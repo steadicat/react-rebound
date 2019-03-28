@@ -4,6 +4,10 @@ import rebound, {Spring, SpringConfig} from 'rebound';
 import MultiSpring from './MultiSpring';
 import {AnimatableProps, toStyle} from './style';
 
+type SpringForProp<Prop extends keyof AnimatableProps> = AnimatableProps[Prop] extends number[]
+  ? MultiSpring<AnimatableProps[Prop]>
+  : Spring;
+
 const springSystem = new rebound.SpringSystem();
 
 function usePersisted<Value>(value: Value) {
@@ -12,11 +16,11 @@ function usePersisted<Value>(value: Value) {
   return ref;
 }
 
-function createSpring<Props extends Partial<AnimatableProps>>(
-  startValue: Props[keyof Props],
+function createSpring<Prop extends keyof AnimatableProps>(
+  startValue: AnimatableProps[Prop],
   tension: number,
   friction: number,
-): Props[keyof Props] extends number[] ? MultiSpring : Spring {
+) {
   let spring;
   if (Array.isArray(startValue)) {
     spring = new MultiSpring(springSystem, new SpringConfig(tension, friction));
@@ -25,12 +29,12 @@ function createSpring<Props extends Partial<AnimatableProps>>(
     spring = springSystem.createSpringWithConfig(new SpringConfig(tension, friction));
     spring.setCurrentValue((startValue as unknown) as number);
   }
-  return spring as Props[keyof Props] extends number[] ? MultiSpring : Spring;
+  return spring as SpringForProp<Prop>;
 }
 
-export function useAnimation<Props extends Partial<AnimatableProps>>(
+export function useAnimation<Props extends keyof Partial<AnimatableProps>>(
   ref: MutableRefObject<HTMLElement | undefined | null>,
-  props: Props,
+  props: {[prop in Props]: AnimatableProps[prop]},
   {
     animate = true,
     tension = 230,
@@ -53,9 +57,7 @@ export function useAnimation<Props extends Partial<AnimatableProps>>(
     onEnd?: () => void;
   } = {},
 ) {
-  const springs = React.useRef<
-    {[prop in keyof Props]: Props[prop] extends number ? rebound.Spring : MultiSpring}
-  >({} as {[prop in keyof Props]: Props[prop] extends number ? rebound.Spring : MultiSpring});
+  const springs = React.useRef({} as {[Prop in Props]: SpringForProp<Prop>});
   const animating = React.useRef(0);
 
   const onStartRef = usePersisted(onStart);
@@ -76,11 +78,10 @@ export function useAnimation<Props extends Partial<AnimatableProps>>(
       if (!ref.current) return;
 
       request.current = null;
-      const currentValues: {[key in keyof Props]?: Props[key]} = {};
+      const currentValues: {[Prop in Props]?: AnimatableProps[Prop]} = {};
 
-      for (const p in springs.current) {
-        const prop = p as keyof typeof currentValues;
-        currentValues[prop] = springs.current[prop]!.getCurrentValue();
+      for (const prop in springs.current) {
+        currentValues[prop] = springs.current[prop].getCurrentValue();
       }
 
       const style = toStyle(currentValues);
@@ -97,13 +98,12 @@ export function useAnimation<Props extends Partial<AnimatableProps>>(
   }, [ref]);
 
   React.useEffect(() => {
-    for (const p in props) {
-      const prop = p as keyof typeof props;
+    for (const prop in props) {
       const value = props[prop];
       if (value === undefined) continue;
       let spring = springs.current[prop];
       if (!spring) {
-        spring = springs.current[prop] = createSpring<Props>(value, tension, friction);
+        spring = springs.current[prop] = createSpring(value, tension, friction);
         spring.setRestSpeedThreshold(speedThreshold);
         spring.setRestDisplacementThreshold(displacementThreshold);
         spring.setOvershootClampingEnabled(clamp);
@@ -111,7 +111,7 @@ export function useAnimation<Props extends Partial<AnimatableProps>>(
       }
       if (!animate) {
         spring.setCurrentValue(value);
-        return;
+        continue;
       }
       if (delay) {
         setTimeout(() => spring.setEndValue(value), delay);
@@ -124,10 +124,9 @@ export function useAnimation<Props extends Partial<AnimatableProps>>(
   // Cleanup
   React.useEffect(() => {
     () => {
-      for (const p in springs.current) {
-        const prop = p as keyof AnimatableProps;
-        springs.current[prop]!.setAtRest();
-        springs.current[prop]!.destroy();
+      for (const prop in springs.current) {
+        springs.current[prop].setAtRest();
+        springs.current[prop].destroy();
       }
     };
   }, []);

@@ -46,6 +46,7 @@ const rotate = cssFunction('rotate', deg, deg);
 const rotateZ = cssFunction('rotateZ', deg);
 const skew = cssFunction('skew', deg, deg);
 
+function color([r, g, b]: [number, number, number]): string;
 function color([r, g, b, a]: [number, number, number, number?]) {
   return typeof a === 'undefined' ? rgb(r, g, b) : rgba(r, g, b, a);
 }
