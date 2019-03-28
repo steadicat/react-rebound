@@ -99,7 +99,18 @@ export const Animate = React.forwardRef(
     if (typeof children === 'function') {
       children = children(animating.current);
     }
-    return React.cloneElement(React.Children.only(children), {ref});
+    const child = React.Children.only(children);
+    return React.cloneElement(child, {
+      ref: (element: HTMLElement | undefined) => {
+        ref.current = element;
+        // Hack to forward ref to caller
+        if (child.ref && 'current' in child.ref) {
+          child.ref.current = element;
+        } else if (typeof child.ref === 'function') {
+          child.ref(element);
+        }
+      },
+    });
   },
 );
 

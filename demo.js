@@ -2322,7 +2322,19 @@
         if (typeof children === 'function') {
             children = children(animating.current);
         }
-        return react.cloneElement(react.Children.only(children), { ref: ref });
+        var child = react.Children.only(children);
+        return react.cloneElement(child, {
+            ref: function (element) {
+                ref.current = element;
+                // Hack to forward ref to caller
+                if (child.ref && 'current' in child.ref) {
+                    child.ref.current = element;
+                }
+                else if (typeof child.ref === 'function') {
+                    child.ref(element);
+                }
+            },
+        });
     });
     Animate.displayName = 'Animate';
 
